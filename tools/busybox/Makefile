@@ -27,7 +27,7 @@ $(SRC_FILENAME):
 	wget -q $(SRC_URL)
 	sha256sum -c $@.sha256 || rm $@
 
-src: $(SRC_FILENAME)
+src: | $(SRC_FILENAME)
 	tar xvf $(SRC_FILENAME)
 	mv $(SRC_DIR) src
 
