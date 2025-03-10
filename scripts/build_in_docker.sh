@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
+if [[ -z "${REPO_DIR:-}" ]]; then
+    echo "REPO_DIR not defined" > /dev/stderr
+    exit 1
+fi
+
 docker_brun() {
     docker build -t "$1" docker
     docker run -it --rm \
-        -v "$HERE":/build \
+        -v "$REPO_DIR":/build \
         "$1" \
         "${@:2}"
 }

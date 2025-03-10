@@ -1,7 +1,11 @@
 HERE := $(patsubst %/,%,$(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
+ARCHITECTURES := i386 x86_64 aarch64 mips64el
+
 NAME := busybox
 VERSION := 1.32.0
+
+BIN_NAMES := ash busybox hexdump xzcat
 
 SRC_DIR := $(NAME)-$(VERSION)
 SRC_FILENAME := $(SRC_DIR).tar.bz2
@@ -11,13 +15,13 @@ CONFIGS := $(patsubst configs/%.config,dist/%,$(wildcard configs/*.config))
 
 .PHONY: all build
 all: build
-build: $(CONFIGS)
+build: $(ARCHITECTURES)
 
 clean:
-	rm -r dist src
+	-rm -r dist src
 
 clean-ark:
-	rm $(SRC_FILENAME)
+	-rm $(SRC_FILENAME)
 
 $(SRC_FILENAME):
 	wget -q $(SRC_URL)
@@ -30,12 +34,10 @@ src: $(SRC_FILENAME)
 dist:
 	mkdir -p $@
 
-dist/%: configs/%.config | src dist
-	bash build.sh $(patsubst dist/%,%,$@)
+dist/%: | src dist
+	bash build.sh $(patsubst dist/%,%,$@) $(MAKE)
 
-#ARCHITECTURES := i386 x86_64 aarch64
-
-#.PHONY: $(ARCHITECTURES)
-#i386: dist/i386/ash
-#x86_64: dist/x86_64/ash
-#aarch64: dist/aarch64/ash
+.PHONY: $(ARCHITECTURES)
+$(foreach arch,$(ARCHITECTURES), $(eval \
+	$(arch): $(foreach bin,$(BIN_NAMES), dist/$(arch)_$(bin) )	\
+))

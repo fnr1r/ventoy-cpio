@@ -23,4 +23,4 @@ USER ubuntu
 
 #RUN bash /home/ubuntu/scripts/download_toolchains.sh
 
-CMD [ "make", "-C", "bootloader/cpio/tools/busybox" ]
+CMD [ "make", "-C", "tools/busybox" ]
