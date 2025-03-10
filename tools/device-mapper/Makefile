@@ -1,5 +1,7 @@
 HERE := $(patsubst %/,%,$(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
+ARCHITECTURES := i386 x86_64 aarch64
+
 NAME := device-mapper
 VERSION := 1.02.28
 
@@ -9,8 +11,9 @@ SRC_DIR := $(NAME).$(VERSION)
 SRC_FILENAME := $(SRC_DIR).tgz
 SRC_URL := ftp://sourceware.org/pub/dm/$(SRC_FILENAME)
 
-.PHONY: all
-all: i386 x86_64 aarch64
+.PHONY: all build
+all: build
+build: $(ARCHITECTURES)
 
 clean:
 	-rm -r dist src
@@ -32,7 +35,7 @@ dist:
 dist/%/$(BIN_NAME): build.sh | src dist
 	bash build.sh $(patsubst dist/%/$(BIN_NAME),%,$@)
 
-.PHONY: i386 x86_64 aarch64
-i386: dist/i386/$(BIN_NAME)
-x86_64: dist/x86_64/$(BIN_NAME)
-aarch64: dist/aarch64/$(BIN_NAME)
+.PHONY: $(ARCHITECTURES)
+$(foreach arch,$(ARCHITECTURES), $(eval \
+	$(arch): dist/$(arch)/$(BIN_NAME)	\
+))
