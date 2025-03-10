@@ -25,7 +25,7 @@ clean-ark:
 
 $(SRC_FILENAME):
 	wget -q $(SRC_URL)
-	sha256sum -c $@.sha256
+	sha256sum -c $@.sha256 || rm $(SRC_FILENAME)
 
 src: $(SRC_FILENAME)
 	tar xvf $(SRC_FILENAME)
