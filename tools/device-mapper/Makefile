@@ -1,4 +1,5 @@
-HERE := $(patsubst %/,%,$(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
+include ../../scripts/here.mk
+include $(SCRIPTS_DIR)/shared.mk
 
 ARCHITECTURES := i386 x86_64 aarch64
 
@@ -11,23 +12,13 @@ SRC_DIR := $(NAME).$(VERSION)
 SRC_FILENAME := $(SRC_DIR).tgz
 SRC_URL := ftp://sourceware.org/pub/dm/$(SRC_FILENAME)
 
-.PHONY: all build
+.PHONY: all build clean
 all: build
 build: $(ARCHITECTURES)
-
 clean:
 	-rm -r dist src
 
-clean-ark:
-	-rm $(SRC_FILENAME)
-
-$(SRC_FILENAME):
-	wget -q $(SRC_URL)
-	sha256sum -c $@.sha256 || rm $@
-
-src: | $(SRC_FILENAME)
-	tar xzf $(SRC_FILENAME)
-	mv $(SRC_DIR) src
+$(call download_and_extract_tar,device-mapper,$(SRC_URL),tgz)
 
 dist:
 	mkdir -p $@

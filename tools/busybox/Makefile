@@ -1,4 +1,5 @@
-HERE := $(patsubst %/,%,$(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
+include ../../scripts/here.mk
+include $(SCRIPTS_DIR)/shared.mk
 
 ARCHITECTURES := i386 x86_64 aarch64 mips64el
 
@@ -13,23 +14,13 @@ SRC_URL := https://busybox.net/downloads/$(SRC_FILENAME)
 
 CONFIGS := $(patsubst configs/%.config,dist/%,$(wildcard configs/*.config))
 
-.PHONY: all build
+.PHONY: all build clean
 all: build
 build: $(ARCHITECTURES)
-
 clean:
 	-rm -r dist src
 
-clean-ark:
-	-rm $(SRC_FILENAME)
-
-$(SRC_FILENAME):
-	wget -q $(SRC_URL)
-	sha256sum -c $@.sha256 || rm $@
-
-src: | $(SRC_FILENAME)
-	tar xvf $(SRC_FILENAME)
-	mv $(SRC_DIR) src
+$(call download_and_extract_tar,busybox,$(SRC_URL),tar.bz2)
 
 dist:
 	mkdir -p $@
