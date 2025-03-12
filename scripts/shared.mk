@@ -1,3 +1,10 @@
+ARCHES_X86 := i386 x86_64
+ARCHES_ARM := aarch64
+ARCHES_MIPS := mips64el
+ARCHES_ALL := $(ARCHES_X86) $(ARCHES_ARM) $(ARCHES_MIPS)
+
+ARCHES_WITHOUT_MIPS := $(ARCHES_X86) $(ARCHES_ARM)
+
 CURL_FLAGS ?= -s
 
 # decided to use curl for downloads d:
@@ -62,3 +69,10 @@ endef
 
 # this is here just to ensure that "all" is the default
 all:
+
+# default to building for all targets
+ifndef TARGETS
+TARGETS := $(ARCHES_ALL)
+endif
+
+export TARGETS

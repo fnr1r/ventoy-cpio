@@ -1,7 +1,9 @@
 include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 
-ARCHITECTURES := i386 x86_64 aarch64 mips64el
+SUPPORTED_ARCHES := $(ARCHES_WITHOUT_MIPS)
+
+include $(SCRIPTS_DIR)/shared_build.mk
 
 NAME := busybox
 VERSION := 1.32.0
@@ -16,7 +18,7 @@ CONFIGS := $(patsubst configs/%.config,dist/%,$(wildcard configs/*.config))
 
 .PHONY: all build clean
 all: build
-build: $(ARCHITECTURES)
+build: $(SUPPORTED_TARGETS)
 clean:
 	-rm -r dist src
 
@@ -28,7 +30,7 @@ dist:
 dist/%: | src dist
 	bash build.sh $(patsubst dist/%,%,$@) $(MAKE)
 
-.PHONY: $(ARCHITECTURES)
-$(foreach arch,$(ARCHITECTURES), $(eval \
+.PHONY: $(SUPPORTED_ARCHES)
+$(foreach arch,$(SUPPORTED_ARCHES), $(eval \
 	$(arch): $(foreach bin,$(BIN_NAMES), dist/$(arch)_$(bin) )	\
 ))
