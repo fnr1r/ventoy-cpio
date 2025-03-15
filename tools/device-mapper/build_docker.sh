@@ -5,7 +5,7 @@ HERE="$(dirname "$(readlink -f -- "$0")")"
 
 . "$HERE/../../repo.sh"
 
-TAG_NAME="dmsetup-build"
+TAG_NAME="device-mapper-build"
 
 # shellcheck source=../../scripts/build_in_docker.sh
 . "$SCRIPTS_DIR/build_in_docker.sh"
