@@ -37,6 +37,9 @@ ENV PATH="${PATH}:${DIETLIBC}/bin"
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
     apt-get install -y zlib1g-dev
 
+RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
+    apt-get install -y curl cpio musl musl-dev musl-tools
+
 RUN echo '\n\
 # SHELL EXTENSIONS IN /etc/bashrc.d\n\
 for file in /etc/bashrc.d/*.sh; do\n\
@@ -50,4 +53,4 @@ WORKDIR /build
 
 USER ubuntu
 
-CMD [ "make" ]
+CMD [ "/build/from_docker.sh" ]
