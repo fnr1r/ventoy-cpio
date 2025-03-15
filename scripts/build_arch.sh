@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
-set -x
 
 HERE="$(dirname "$(readlink -f -- "$0")")"
 
 . "$HERE/lib_build_cpio.sh"
 
 ARCH="$2"
-MY_DIR="$REPO_DIR/arch/$ARCH"
 
 XZ_FLAGS=(-c -e -9)
 
