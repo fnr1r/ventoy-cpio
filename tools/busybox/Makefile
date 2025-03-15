@@ -28,7 +28,7 @@ dist:
 	mkdir -p $@
 
 dist/%: | src dist
-	bash build.sh $(patsubst dist/%,%,$@) $(MAKE)
+	+bash build.sh $(patsubst dist/%,%,$@) $(MAKE)
 
 .PHONY: $(SUPPORTED_ARCHES)
 $(foreach arch,$(SUPPORTED_ARCHES), $(eval \

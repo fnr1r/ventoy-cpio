@@ -44,6 +44,8 @@ unpatch_builtin_fs() {
 main() {
     ARCH="$1"
     DIST_DIR="$HERE/dist/$ARCH"
+    MAKEBIN=("${@:2}")
+    MAKEOPTS=()
 
     CONFIGURE_OPTS=()
 
@@ -76,7 +78,8 @@ main() {
     cp -ar src/. "$TMP_DIR"
 
     pushd "$TMP_DIR" > /dev/null
-    set -x
+
+    MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
 
     ./configure CC="$CC" \
         "${CONFIGURE_OPTS[@]}" \
@@ -84,7 +87,7 @@ main() {
     no_rpl_malloc
     add_uint_defines
     patch_builtin_fs
-    make
+    "${MAKE[@]}"
     unpatch_builtin_fs
 
     TARGET_BIN="dmsetup/dmsetup"

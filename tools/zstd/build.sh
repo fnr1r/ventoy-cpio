@@ -46,34 +46,31 @@ unpatch_builtin_fs() {
 main() {
     ARCH="$1"
     DIST_DIR="$HERE/dist/$ARCH"
+    CC=""
     MAKEBIN=("${@:2}")
     MAKEOPTS=()
 
     case $ARCH in
         aarch64)
-            MAKEOPTS+=(
-                "CC=diet aarch64-linux-gnu-gcc"
-            )
+            CC="diet aarch64-linux-gnu-gcc"
             ;;
         i386)
-            MAKEOPTS+=(
-                "CC=diet gcc -m32"
-            )
+            CC="diet gcc -m32"
             ;;
         mips64el)
-            MAKEOPTS+=(
-                "CC=diet mips64el-linux-musl-gcc"
-            )
+            CC="diet mips64el-linux-musl-gcc"
             ;;
         x86_64)
-            MAKEOPTS+=(
-                "CC=diet gcc"
-            )
+            CC="diet gcc"
             ;;
         *)
             exit 69
             ;;
     esac
+
+    MAKEOPTS+=(
+        "CC=$CC"
+    )
 
     cd "$HERE"
     TMP_DIR="$(mktemp -d)"

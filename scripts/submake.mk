@@ -17,7 +17,7 @@ $1_TARGET := $(if $3,$3,$1)
 )
 $(eval
 $(IS_BUILT_DIR)/$1:
-	$(MAKE) -C $2
+	+$(MAKE) -C $2
 .PHONY: $($1_TARGET)
 $($1_TARGET): $(IS_BUILT_DIR)/$1
 build: $($1_TARGET)
