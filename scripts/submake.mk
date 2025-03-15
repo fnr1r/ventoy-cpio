@@ -19,11 +19,14 @@ $(IS_BUILT_DIR)/$1:
 	+$(MAKE) -C $2
 .PHONY: $($1_TARGET)
 $($1_TARGET): $(IS_BUILT_DIR)/$1
-$(if $4, $4, submakes): $($1_TARGET) | $(IS_BUILT_DIR)
+$(if $4, $4: $($1_TARGET),)
 )
 $(shell \
 if $(MAKE) -C "$2" -q > /dev/null; then \
 	if ! [ -f $(IS_BUILT_DIR)/$1 ]; then \
+		if ! [ -d $(IS_BUILT_DIR) ]; then \
+			mkdir -p $(IS_BUILT_DIR); \
+		fi; \
 		touch $(IS_BUILT_DIR)/$1; \
 	fi \
 elif [ -f "$(IS_BUILT_DIR)/$1" ]; then \
