@@ -68,9 +68,6 @@ clean-ark:
 )
 endef
 
-# this is here just to ensure that "all" is the default
-all:
-
 # default to building for all targets
 ifndef TARGETS
 TARGETS := $(ARCHES_ALL)
