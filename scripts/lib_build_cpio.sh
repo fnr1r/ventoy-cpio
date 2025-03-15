@@ -8,7 +8,8 @@ SRCHERE="$(dirname "$(readlink -f -- "${BASH_SOURCE[0]}")")"
 export BUILD_DIR="$REPO_DIR/build"
 
 TARGET="$1"
-TMP_DIR="$REPO_DIR/$TARGET.temp"
+TMP_DIR_1="${TARGET#build/}"
+TMP_DIR="$BUILD_DIR/${TMP_DIR_1#dist/}.temp"
 
 temp_dir_go() {
     if [[ -d "$TMP_DIR" ]]; then
@@ -19,6 +20,7 @@ temp_dir_go() {
 }
 
 pack_cpio() {
+    mkdir -p "$(dirname "$REPO_DIR/$TARGET")"
     find . | cpio -o -H newc --owner=root:root > "$REPO_DIR/$TARGET"
 }
 
