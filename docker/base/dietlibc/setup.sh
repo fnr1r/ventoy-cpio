@@ -43,13 +43,13 @@ main() {
     download_and_extract "https://www.fefe.de/dietlibc/dietlibc-0.34.tar.xz" "dietlibc-0.34" "$dest"
     pushd "$dest" > /dev/null
     make ARCH=x86_64 CC=gcc all
-    make ARCH=i386 CC="gcc -D__dietlibc__ -m32" all
+    make ARCH=i386 CFLAGS+="-m32" all
     make ARCH=aarch64 CROSS=aarch64-linux-gnu- all
-    make ARCH=mips CROSS=mips-linux-gnu- all
+    make ARCH=mips64 CROSS=mips64el-linux-musl- all
     make ARCH=x86_64 CC=gcc install
-    make ARCH=i386 CC="gcc -D__dietlibc__ -m32" install
+    make ARCH=i386 CFLAGS+="-m32" install
     make ARCH=aarch64 CROSS=aarch64-linux-gnu- install
-    make ARCH=mips CROSS=mips-linux-gnu- install
+    make ARCH=mips64 CROSS=mips64el-linux-musl- install
     popd > /dev/null
     rm -r "$dest"
     eval "exit 0"
