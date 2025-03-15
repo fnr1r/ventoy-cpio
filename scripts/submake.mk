@@ -19,6 +19,7 @@ $(IS_BUILT_DIR)/$1:
 .PHONY: $($1_TARGET)
 $($1_TARGET): $(IS_BUILT_DIR)/$1
 $(if $4, $4: $($1_TARGET),)
+.PHONY: clean-$($1_TARGET)
 clean-$($1_TARGET):
 	+$(MAKE) -C $2 clean
 clean: clean-$($1_TARGET)
