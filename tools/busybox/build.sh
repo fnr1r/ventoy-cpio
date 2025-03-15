@@ -3,14 +3,25 @@ set -euo pipefail
 
 HERE="$(dirname "$(readlink -f -- "$0")")"
 
-. "$HERE/../../scripts/tool_build.sh"
+. "$HERE/../../repo.sh"
+# shellcheck source=../../scripts/tool_build.sh
+. "$SCRIPTS_DIR/tool_build.sh"
 
-main() {
-    bin_name="$1"
+ARCH=""
+BIN_NAME=""
+CONFIG_NAME=""
+MAKEBIN=()
+MAKEOPTS=()
+PROG=""
 
-    IFS=_ read -r arch prog prog2 <<< "$bin_name"
+argparse() {
+    BIN_NAME="$1"
 
-    config_name="$bin_name.config"
+    IFS=_ read -r arch prog prog2 <<< "$BIN_NAME"
+    ARCH="${arch}"
+    PROG="${prog}"
+
+    CONFIG_NAME="$BIN_NAME.config"
 
     MAKEBIN=("${@:2}")
     MAKEOPTS=(
@@ -27,11 +38,14 @@ main() {
             ;;
         i386)
             MAKEOPTS+=(
+                #"CC=musl-gcc"
+                #"LD=musl-ldd"
+                #"LDFLAGS=-"
                 "ARCH=i386"
                 "CFLAGS+=-m32"
                 "LDFLAGS+=-m32"
             )
-            config_name="x86_64_${prog}.config"
+            CONFIG_NAME="x86_64_${prog}.config"
             ;;
         mips64el)
             MAKEOPTS+=(
@@ -42,39 +56,41 @@ main() {
             )
             ;;
         x86)
-            arch="${arch}_${prog}"
-            prog="${prog2}"
+            ARCH="${arch}_${prog}"
+            PROG="${prog2}"
+            if [[ "$PROG" != "busybox" ]]; then
+                MAKEOPTS+=("CC=musl-gcc")
+            fi
             ;;
         *)
             exit 69
             ;;
     esac
+}
 
-    cd "$HERE"
-    TMP_DIR="$(mktemp -d)"
-    cd "$TMP_DIR"
-    pushd "$TMP_DIR" > /dev/null
-
+prepare() {
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-
-    if [[ "$prog" == "busybox" ]]; then
-        "${MAKE[@]}" defconfig
+    if [[ "$PROG" == "busybox" ]]; then
+        "${MAKE[@]}" defconfig > /dev/null
     else
-        cp -a "$HERE/configs/$config_name" .config
+        cp -a "$HERE/configs/$CONFIG_NAME" .config
     fi
+}
+
+build() {
+    MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
     "${MAKE[@]}"
+}
 
-    target_path="$HERE/dist/$bin_name"
+package() {
+    target_path="$HERE/dist/$BIN_NAME"
     mv busybox "$target_path"
+}
 
-    popd > /dev/null
-    rm -r "$TMP_DIR"
-
-    alt_target_dir="$HERE/dist/$arch"
+postbuild() {
+    alt_target_dir="$HERE/dist/$ARCH"
     mkdir -p "$alt_target_dir"
-    ln -s "../$bin_name" "$alt_target_dir/$prog"
-
-    eval "exit 0"
+    ln -s "../$BIN_NAME" "$alt_target_dir/$PROG"
 }
 
 main "$@"

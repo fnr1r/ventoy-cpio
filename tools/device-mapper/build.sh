@@ -3,7 +3,15 @@ set -euo pipefail
 
 HERE="$(dirname "$(readlink -f -- "$0")")"
 
-. "$HERE/../../scripts/tool_build.sh"
+. "$HERE/../../repo.sh"
+# shellcheck source=../../scripts/tool_build.sh
+. "$SCRIPTS_DIR/tool_build.sh"
+
+ARCH=""
+CC=""
+DIST_DIR=""
+MAKEBIN=()
+MAKEOPTS=()
 
 no_rpl_malloc() {
     sed -i include/configure.h \
@@ -41,12 +49,12 @@ unpatch_builtin_fs() {
     fi
 }
 
-main() {
+argparse() {
     ARCH="$1"
+    CONFIGURE_OPTS=()
     DIST_DIR="$HERE/dist/$ARCH"
     MAKEBIN=("${@:2}")
     MAKEOPTS=()
-    CONFIGURE_OPTS=()
 
     case $ARCH in
         aarch64)
@@ -75,36 +83,33 @@ main() {
             exit 69
             ;;
     esac
+}
 
-    cd "$HERE"
-    TMP_DIR="$(mktemp -d)"
-
+copysrc() {
     cp -ar src/. "$TMP_DIR"
+}
 
-    pushd "$TMP_DIR" > /dev/null
-
-    MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-
+prepare() {
     ./configure CC="$CC" \
         "${CONFIGURE_OPTS[@]}" \
         --disable-nls --disable-selinux --disable-shared
     no_rpl_malloc
     add_uint_defines
     patch_builtin_fs
+}
+
+build() {
+    MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
     "${MAKE[@]}" dmsetup
     unpatch_builtin_fs
+}
 
+package() {
     TARGET_BIN="dmsetup/dmsetup"
-
     mkdir -p "$DIST_DIR"
     cp -ar "$TARGET_BIN" "$DIST_DIR/dmsetup.debug"
     "${STRIP_CMD[@]}" "$TARGET_BIN"
     mv "$TARGET_BIN" "$DIST_DIR/dmsetup"
-
-    popd > /dev/null
-    rm -r "$TMP_DIR"
-
-    eval "exit 0"
 }
 
 main "$@"

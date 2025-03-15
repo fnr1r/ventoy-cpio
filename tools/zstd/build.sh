@@ -7,43 +7,14 @@ HERE="$(dirname "$(readlink -f -- "$0")")"
 # shellcheck source=../../scripts/tool_build.sh
 . "$SCRIPTS_DIR/tool_build.sh"
 
-no_rpl_malloc() {
-    sed -i include/configure.h \
-        -e 's/^\#define malloc rpl_malloc/\/\/#define malloc rpl_malloc/'
-}
+ARCH=""
+DIST_DIR=""
+CC=""
+MAKEBIN=()
+MAKEOPTS=()
+STRIP_CMD=()
 
-add_uint_defines() {
-    cat >> include/configure.h << EOF
-
-#ifndef UINT32_MAX
-#define UINT32_MAX  (4294967295U)
-#endif
-
-#ifndef UINT64_C
-#define UINT64_C(c) c ## ULL
-#endif
-EOF
-}
-
-OS_INCLUDE="/usr/include"
-FS_H="$OS_INCLUDE/linux/fs.h"
-
-patch_builtin_fs() {
-    if [[ -f "$FS_H.bak" ]]; then
-        return
-    fi
-    sudo mv "$FS_H" "$FS_H.bak"
-    echo '#include <sys/mount.h>' | sudo tee "$FS_H" > /dev/null
-}
-
-unpatch_builtin_fs() {
-    if [[ -f "$FS_H.bak" ]]; then
-        sudo rm "$FS_H"
-        sudo mv "$FS_H.bak" "$FS_H"
-    fi
-}
-
-main() {
+argparse() {
     ARCH="$1"
     DIST_DIR="$HERE/dist/$ARCH"
     CC=""
@@ -53,15 +24,19 @@ main() {
     case $ARCH in
         aarch64)
             CC="diet aarch64-linux-gnu-gcc"
+            STRIP_CMD=(aarch64-linux-gnu-strip)
             ;;
         i386)
             CC="diet gcc -m32"
+            STRIP_CMD=(strip)
             ;;
         mips64el)
             CC="diet mips64el-linux-musl-gcc"
+            STRIP_CMD=(mips64el-linux-musl-strip)
             ;;
         x86_64)
             CC="diet gcc"
+            STRIP_CMD=(strip --strip-all)
             ;;
         *)
             exit 69
@@ -71,29 +46,25 @@ main() {
     MAKEOPTS+=(
         "CC=$CC"
     )
+}
 
-    cd "$HERE"
-    TMP_DIR="$(mktemp -d)"
-
+copysrc() {
     cp -ar src/. "$TMP_DIR"
+}
 
-    pushd "$TMP_DIR/programs" > /dev/null
+TARGET_BIN="zstd"
 
+build() {
+    cd programs
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-
-    TARGET_BIN="zstd"
-
     "${MAKE[@]}" "$TARGET_BIN"
+}
 
+package() {
     mkdir -p "$DIST_DIR"
-    #cp -ar "$TARGET_BIN" "$DIST_DIR/dmsetup.debug"
-    #"${STRIP_CMD[@]}" "$TARGET_BIN"
+    cp -ar "$TARGET_BIN" "$DIST_DIR/zstdcat.debug"
+    "${STRIP_CMD[@]}" "$TARGET_BIN"
     mv "$TARGET_BIN" "$DIST_DIR/zstdcat"
-
-    popd > /dev/null
-    rm -r "$TMP_DIR"
-
-    eval "exit 0"
 }
 
 main "$@"
