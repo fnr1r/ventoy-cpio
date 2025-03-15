@@ -7,7 +7,7 @@ build: submakes
 
 include $(SCRIPTS_DIR)/submake.mk
 
-TOOLS := busybox device-mapper
+TOOLS := busybox device-mapper zstd
 
 $(foreach tool,$(TOOLS),\
 	$(call add_submake_hack,$(tool),tools/$(tool),tools_busybox)\

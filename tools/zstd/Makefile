@@ -1,18 +1,18 @@
 include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 
-SUPPORTED_ARCHES := $(ARCHES_WITHOUT_MIPS)
+SUPPORTED_ARCHES := $(ARCHES_ALL)
 
 include $(SCRIPTS_DIR)/shared_build.mk
 
-NAME := device-mapper
-VERSION := 1.02.28
+NAME := zstd
+VERSION := 1.0.0
 
-BIN_NAME := dmsetup
+BIN_NAME := $(NAME)cat
 
-SRC_DIR := $(NAME).$(VERSION)
-SRC_FILENAME := $(SRC_DIR).tgz
-SRC_URL := ftp://sourceware.org/pub/dm/$(SRC_FILENAME)
+SRC_DIR := $(NAME)-$(VERSION)
+SRC_FILENAME := $(SRC_DIR).tar.gz
+SRC_URL := https://codeload.github.com/facebook/$(NAME)/tar.gz/refs/tags/v$(VERSION)
 
 .PHONY: all build clean
 all: build

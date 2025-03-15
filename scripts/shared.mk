@@ -28,7 +28,7 @@ $(if $2,$2,$(notdir $1)):
 	@if [ ! -f $$@.sha256 ]; then \
 		echo "Warning: Hash file $$@.sha256 not found!"; \
 		echo "Expected hash:"; \
-		sha256sum $$@.sha256; \
+		sha256sum $$@; \
 	else \
 		sha256sum -c $$@.sha256; \
 		if [ $$$$? -ne 0 ]; then \
@@ -47,23 +47,24 @@ endef
 #
 # TODO: remove arg3 and detect it instead
 #
-# arg1: id
-# arg2: url
-# arg3: extension
+# arg1: url
+# arg2: target file
+# arg3: unpacked directory
+# arg4: target directory
 define download_and_extract_tar
-$(if $1,,$(error "$0: id not speficied"))
-$(if $2,,$(error "$0: url not speficied"))
-$(eval $1_FILE := $(notdir $2))
-$(eval $1_DIR := $(patsubst %.$3,%,$($1_FILE)))
-$(call download_file,$2,$($1_FILE))
+$(if $1,,$(error "$0: url not speficied"))
+$(if $2,,$(error "$0: target file not speficied"))
+$(if $3,,$(error "$0: unpacked directory not speficied"))
+$(if $4,,$(error "$0: target directory not speficied"))
+$(call download_file,$1,$2)
 $(eval
-src: | $($1_FILE)
+src: | $2
 	tar xf $$|
-	mv $($1_DIR) src
+	mv $3 $4
 
 .PHONY: clean-ark
 clean-ark:
-	-rm $(SRC_FILENAME)
+	-rm $2
 )
 endef
 

@@ -22,7 +22,7 @@ build: $(SUPPORTED_TARGETS)
 clean:
 	-rm -r dist src
 
-$(call download_and_extract_tar,busybox,$(SRC_URL),tar.bz2)
+$(call download_and_extract_tar,$(SRC_URL),$(SRC_FILENAME),$(SRC_DIR),src)
 
 dist:
 	mkdir -p $@
