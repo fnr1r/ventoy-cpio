@@ -16,7 +16,7 @@ base: $(DIST_DIR)/ventoy.cpio
 
 include $(SCRIPTS_DIR)/submake.mk
 
-TOOLS := busybox device-mapper zstd
+TOOLS := busybox device-mapper xz-embedded zstd
 
 $(foreach tool,$(TOOLS),\
 	$(call add_submake_hack,$(tool),tools/$(tool),tools_busybox,tools)\
