@@ -12,4 +12,4 @@ main() {
     eval "exit 0"
 }
 
-make "$@"
+main "$@"
