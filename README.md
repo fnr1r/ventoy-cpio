@@ -3,6 +3,11 @@
 NOTE: This is just a small part of my attempt to add a sane(-ish) build system
 to Ventoy.
 
+## Progress
+
+- ventoy.cpio - 100%
+- ventoy_ARCH.cpio - ~20%
+
 ## Notes
 
 - [In GCC terms](https://gcc.gnu.org/onlinedocs/gccint/Configure-Terms.html):
