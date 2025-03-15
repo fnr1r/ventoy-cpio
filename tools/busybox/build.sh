@@ -36,7 +36,7 @@ main() {
         mips64el)
             MAKEOPTS+=(
                 "ARCH=mips"
-                "CROSS_COMPILE=mips-linux-gnu-"
+                "CROSS_COMPILE=mips64el-linux-musl-"
                 "CFLAGS+=-mips64r2 -mabi=64 -Os"
                 "LDFLAGS+=-mips64r2 -mabi=64 -Os"
             )

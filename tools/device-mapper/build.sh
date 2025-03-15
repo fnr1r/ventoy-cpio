@@ -46,7 +46,6 @@ main() {
     DIST_DIR="$HERE/dist/$ARCH"
     MAKEBIN=("${@:2}")
     MAKEOPTS=()
-
     CONFIGURE_OPTS=()
 
     case $ARCH in
@@ -56,12 +55,17 @@ main() {
             STRIP_CMD=(aarch64-linux-gnu-strip)
             ;;
         i386)
-            CC="diet gcc -m32"
+            CC="diet gcc"
+            MAKEOPTS+=(
+                "CFLAGS+=-m32"
+            )
             STRIP_CMD=(strip)
             ;;
         mips64el)
-            echo broken ":("
-            exit 69
+            CC="diet mips64el-linux-musl-gcc"
+            CONFIGURE_OPTS=(--target=mips64el --host=x86_64-linux-gnu)
+            STRIP_CMD=(mips64el-linux-musl-strip)
+            FS_H="/opt/mips64el-linux-gnu-musl-gcc7.3.0/mips64el-linux-musl/include/linux/fs.h"
             ;;
         x86_64)
             CC="diet gcc"
@@ -87,7 +91,7 @@ main() {
     no_rpl_malloc
     add_uint_defines
     patch_builtin_fs
-    "${MAKE[@]}"
+    "${MAKE[@]}" dmsetup
     unpatch_builtin_fs
 
     TARGET_BIN="dmsetup/dmsetup"
