@@ -20,8 +20,9 @@ RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=
 
 ENV AARCH64_TOOLCHAIN="/opt/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu"
 ENV MIPS_TOOLCHAIN="/opt/mips-loongson-gcc7.3-2019.06-29-linux-gnu"
+ENV MIPS64EL_TOOLCHAIN="/opt/mips64el-linux-gnu-musl-gcc7.3.0"
 
-ENV PATH="${PATH}:${AARCH64_TOOLCHAIN}/bin:${MIPS_TOOLCHAIN}/bin"
+ENV PATH="${PATH}:${AARCH64_TOOLCHAIN}/bin:${MIPS_TOOLCHAIN}/bin:${MIPS64EL_TOOLCHAIN}/bin"
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
     apt-get install -y make gcc gcc-multilib
@@ -33,6 +34,9 @@ RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=
 ENV DIETLIBC="/opt/diet"
 ENV PATH="${PATH}:${DIETLIBC}/bin"
 
+RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
+    apt-get install -y zlib1g-dev
+
 RUN echo '\n\
 # SHELL EXTENSIONS IN /etc/bashrc.d\n\
 for file in /etc/bashrc.d/*.sh; do\n\
@@ -41,3 +45,9 @@ done\n\
 ' >> /etc/bash.bashrc
 
 COPY bashrc.d /etc/bashrc.d
+
+WORKDIR /build
+
+USER ubuntu
+
+CMD [ "make" ]

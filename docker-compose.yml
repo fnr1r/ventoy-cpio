@@ -1,0 +1,6 @@
+---
+services:
+  builder:
+    build: docker/base
+    volumes:
+      - .:/build
