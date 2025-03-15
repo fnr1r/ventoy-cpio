@@ -53,4 +53,4 @@ WORKDIR /build
 
 USER ubuntu
 
-CMD [ "/build/from_docker.sh" ]
+CMD [ "/build/scripts/from_docker.sh" ]
