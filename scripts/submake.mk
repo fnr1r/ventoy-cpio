@@ -1,4 +1,3 @@
-# This is a hack to not print
 IS_BUILT_DIR := .is_built.d
 
 $(IS_BUILT_DIR):
@@ -20,6 +19,9 @@ $(IS_BUILT_DIR)/$1:
 .PHONY: $($1_TARGET)
 $($1_TARGET): $(IS_BUILT_DIR)/$1
 $(if $4, $4: $($1_TARGET),)
+clean-$($1_TARGET):
+	+$(MAKE) -C $2 clean
+clean: clean-$($1_TARGET)
 )
 $(shell \
 if $(MAKE) -C "$2" -q > /dev/null; then \
