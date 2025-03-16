@@ -12,7 +12,7 @@ RUN useradd -ms /bin/bash ubuntu
 RUN usermod -aG sudo ubuntu
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y bzip2 wget xz-utils
+    apt-get install -y bzip2 curl cpio wget xz-utils
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
     --mount=type=bind,source=toolchains,target=/tmp/toolchains \
@@ -25,7 +25,13 @@ ENV MIPS64EL_TOOLCHAIN="/opt/mips64el-linux-gnu-musl-gcc7.3.0"
 ENV PATH="${PATH}:${AARCH64_TOOLCHAIN}/bin:${MIPS_TOOLCHAIN}/bin:${MIPS64EL_TOOLCHAIN}/bin"
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y make gcc gcc-multilib
+    apt-get install -y make
+
+RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
+    apt-get install -y gcc gcc-multilib
+
+RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
+    apt-get install -y musl musl-dev musl-tools
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
     --mount=type=bind,source=dietlibc,target=/tmp/dietlibc \
@@ -35,10 +41,10 @@ ENV DIETLIBC="/opt/diet"
 ENV PATH="${PATH}:${DIETLIBC}/bin"
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y zlib1g-dev
+    apt-get install -y liblz4-dev liblzma-dev liblzo2-dev libzstd-dev zlib1g-dev
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y curl cpio musl musl-dev musl-tools
+    apt-get install -y upx
 
 RUN echo '\n\
 # SHELL EXTENSIONS IN /etc/bashrc.d\n\

@@ -1,7 +1,7 @@
 include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 
-SUPPORTED_ARCHES := x86_64
+SUPPORTED_ARCHES := $(ARCHES_X86)
 
 include $(SCRIPTS_DIR)/shared_build.mk
 
