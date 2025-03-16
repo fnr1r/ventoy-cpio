@@ -10,6 +10,7 @@ HERE="$(dirname "$(readlink -f -- "$0")")"
 ARCH=""
 DIST_DIR=""
 CC=""
+CFLAGS=""
 MAKEBIN=()
 MAKEOPTS=()
 STRIP_CMD=()
@@ -26,7 +27,7 @@ argparse() {
         ZSTD_SUPPORT=1
         LZMA_XZ_SUPPORT=1
     )
-    CFLAGS="-Os -flto -static"
+    CFLAGS="-Os -flto"
     LDFLAGS="-static"
 
     case $ARCH in
@@ -70,10 +71,35 @@ copysrc() {
 TARGET_BIN="unsquashfs"
 
 build() {
-    cd "squashfs-tools"
+    PREFIX="$(pwd)/prefix"
+    MAKEOPTS+=(
+        #"CFLAGS="
+        "INCLUDEDIR+=$PREFIX/include"
+        "LDFLAGS+=$PREFIX/lib"
+    )
+
+    pushd lz4 > /dev/null
+    "${MAKEBIN[@]}" -C lib "PREFIX=$PREFIX" install
+    popd > /dev/null
+
+    pushd lzo > /dev/null
+    ./configure "--prefix=$PREFIX"
+    "${MAKEBIN[@]}" install
+    popd > /dev/null
+
+    pushd xz > /dev/null
+    popd > /dev/null
+
+    pushd zstd > /dev/null
+    "${MAKEBIN[@]}" -C lib "PREFIX=$PREFIX" install
+    popd > /dev/null
+
+    #pushd "squashfs-tools" > /dev/null
+    cd squashfs-tools
     #MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
     env "${MAKEOPTS[@]}" "${MAKEBIN[@]}" \
         "$TARGET_BIN"
+    #popd > /dev/null
 }
 
 package() {

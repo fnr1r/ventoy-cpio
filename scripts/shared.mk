@@ -5,7 +5,7 @@ ARCHES_ALL := $(ARCHES_X86) $(ARCHES_ARM) $(ARCHES_MIPS)
 
 ARCHES_WITHOUT_MIPS := $(ARCHES_X86) $(ARCHES_ARM)
 
-CURL_FLAGS ?= -s
+CURL_FLAGS ?= -L -s
 
 # decided to use curl for downloads d:
 #WGET_FLAGS ?= -q
@@ -58,13 +58,16 @@ $(if $3,,$(error "$0: unpacked directory not speficied"))
 $(if $4,,$(error "$0: target directory not speficied"))
 $(call download_file,$1,$2)
 $(eval
-src: | $2
+$4: | $2
 	tar xf $$|
-	mv $3 $4
+	mv $3 $$@
+
+.PHONY: clean-ark-$2
+clean-ark-$2:
+	-rm $2
 
 .PHONY: clean-ark
-clean-ark:
-	-rm $2
+clean-ark: clean-ark-$2
 )
 endef
 
