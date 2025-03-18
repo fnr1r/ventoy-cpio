@@ -44,7 +44,12 @@ RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=
     apt-get install -y liblz4-dev liblzma-dev liblzo2-dev libzstd-dev zlib1g-dev
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y upx
+    apt-get install -y upx zstd
+
+# this is required for some programs to compile with musl-gcc
+RUN for i in asm-generic asm linux mtd; do \
+        ln -s ../$i /usr/include/x86_64-linux-musl/$i; \
+    done
 
 RUN echo '\n\
 # SHELL EXTENSIONS IN /etc/bashrc.d\n\
