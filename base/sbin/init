@@ -23,9 +23,6 @@
 #                                                                  #
 ####################################################################
 
-set -e
-set -x
-
 export VTOY_ORG_PATH=$PATH
 export VTOY_PATH=/ventoy
 export BUSYBOX_PATH=$VTOY_PATH/busybox
