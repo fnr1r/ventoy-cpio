@@ -33,6 +33,7 @@ prepare_files_arm64() {
 prepare_files_x86() {
     copy_with i386 32
     copy_with x86_64 64
+    cp -a "$REPO_DIR/tools_extra/vtoytool_install.sh" .
 }
 
 prepare_files_mips64() {
