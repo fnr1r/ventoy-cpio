@@ -34,6 +34,7 @@ argparse() {
             MAKEOPTS+=(
                 "ARCH=arm64"
                 "CROSS_COMPILE=aarch64-linux-gnu-"
+                "CFLAGS+=-Os"
             )
             ;;
         i386)
@@ -42,8 +43,8 @@ argparse() {
                 #"LD=musl-ldd"
                 #"LDFLAGS=-"
                 "ARCH=i386"
-                "CFLAGS+=-m32"
-                "LDFLAGS+=-m32"
+                "CFLAGS+=-m32 -Os"
+                "LDFLAGS+=-m32 -Os"
             )
             CONFIG_NAME="x86_64_${prog}.config"
             ;;
@@ -58,9 +59,10 @@ argparse() {
         x86)
             ARCH="${arch}_${prog}"
             PROG="${prog2}"
-            #if [[ "$PROG" != "busybox" ]]; then
-            #    MAKEOPTS+=("CC=musl-gcc")
-            #fi
+            MAKEOPTS+=(
+                "CC=musl-gcc"
+                "CFLAGS+=-Os"
+            )
             ;;
         *)
             exit 69
