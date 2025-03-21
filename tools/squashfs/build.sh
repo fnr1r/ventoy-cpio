@@ -132,7 +132,7 @@ build() {
     #pushd "squashfs-tools" > /dev/null
     cd squashfs-tools
     #MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    CFLAGS="$CFLAGS -I$PREFIX/include" LDFLAGS="$LDFLAGS -L$PREFIX/lib" "${MAKEBIN[@]}" \
+    CFLAGS="$CFLAGS $Q_CFLAGS -I$PREFIX/include" LDFLAGS="$LDFLAGS $Q_LDFLAGS -L$PREFIX/lib" "${MAKEBIN[@]}" \
         "CC=$CC" "${MAKEOPTS[@]}" \
         "$TARGET_BIN"
     #popd > /dev/null
@@ -141,7 +141,7 @@ build() {
 package() {
     cp -ar "$TARGET_BIN" "$TARGET_DIR/$TARGET_BIN.debug"
     "${STRIP_CMD[@]}" "$TARGET_BIN"
-    if [[ "$ARCH" != "mips64el" ]]; then
+    if [[ "$ARCH" != "mips64el" ]] && [[ "$ARCH" != "x86_64" ]]; then
         cp -ar "$TARGET_BIN" "$TARGET_DIR/$TARGET_BIN.stripped"
         upx "$TARGET_BIN"
     fi
