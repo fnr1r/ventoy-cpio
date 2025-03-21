@@ -12,19 +12,19 @@ ARCH="$2"
 
 copy_with() {
     local arch="$1" suffix="$2"
-    # TODO
+    cp -a \
+        "$REPO_DIR/tools/device-mapper/dist/${arch}/dmsetup" \
+        "dmsetup${suffix}"
+    cp -a \
+        "$REPO_DIR/tools/squashfs/dist/${arch}/unsquashfs" \
+        "unsquashfs${suffix}"
+    cp -a \
+        "$REPO_DIR/tools/zstd/dist/${arch}/zstdcat" \
+        "zstdcat${suffix}"
 }
 
 prepare_files_arm64() {
-    cp -a \
-        "$REPO_DIR/tools/device-mapper/dist/aarch64/dmsetup" \
-        dmsetupaa64
-    cp -a \
-        "$REPO_DIR/tools/squashfs/dist/aarch64/unsquashfs" \
-        unsquashfs64
-    cp -a \
-        "$REPO_DIR/tools/zstd/dist/aarch64/zstdcat" \
-        zstdcataa64
+    copy_with aarch64 aa64
 }
 
 prepare_files_x86() {
@@ -46,6 +46,10 @@ prepare_files_x86() {
     cp -a \
         "$REPO_DIR/tools/zstd/dist/x86_64/zstdcat" \
         zstdcat64
+}
+
+prepare_files_mips64() {
+    copy_with mips64el m64e
 }
 
 prepare_files() {

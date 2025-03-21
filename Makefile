@@ -11,10 +11,10 @@ clean:
 	-rm -r dist build
 
 .PHONY: arch tools tools-bin
-arch: tools tools-bin
+arch: tools tools-bin arch-ramdisks
 
 .PHONY: base
-base: $(DIST_DIR)/ventoy.cpio $(DIST_DIR)/ventoy_x86.cpio
+base: $(DIST_DIR)/ventoy.cpio
 
 include $(SCRIPTS_DIR)/submake.mk
 
@@ -29,3 +29,5 @@ $(BUILD_DIR)/tool_%.cpio: | tools
 
 $(DIST_DIR)/ventoy_%.cpio: $(BUILD_DIR)/tool_%.cpio # $(wildcard arch/$(patsubst build/ventoy_%.cpio,%, $@)/*)
 	bash scripts/build_arch.sh $@ $(patsubst $(DIST_DIR)/ventoy_%.cpio,%,$@)
+
+arch-ramdisks: $(DIST_DIR)/ventoy_arm64.cpio $(DIST_DIR)/ventoy_mips64.cpio $(DIST_DIR)/ventoy_x86.cpio

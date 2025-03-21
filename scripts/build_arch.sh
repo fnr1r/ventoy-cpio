@@ -29,10 +29,10 @@ prepare_files_arm64() {
     copy_with aarch64 aa64
 }
 
-prepare_files_mips64el() {
+prepare_files_mips64() {
     cp -aL \
         "$REPO_DIR/tools/busybox/dist/x86_64_ash" \
-        ash
+        m64
     copy_with mips64el m64e
 }
 
