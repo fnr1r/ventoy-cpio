@@ -1,9 +1,10 @@
 include ../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 
-.PHONY: all build tools
+.PHONY: all build clean tools
 all: build
 build: tools
+clean:
 tools: 
 
 TOOLS := busybox device-mapper xz-embedded zstd

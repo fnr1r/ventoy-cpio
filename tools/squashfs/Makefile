@@ -1,7 +1,7 @@
 include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 
-SUPPORTED_ARCHES := $(ARCHES_X86)
+SUPPORTED_ARCHES := $(ARCHES_ALL)
 
 include $(SCRIPTS_DIR)/shared_build.mk
 
@@ -44,6 +44,14 @@ XZ_URL := https://github.com/tukaani-project/$(XZ_NAME)/releases/download/v$(XZ_
 
 $(call download_and_extract_tar,$(XZ_URL),$(XZ_FILENAME),$(XZ_DIR),src/$(XZ_NAME))
 
+ZLIB_NAME := zlib
+ZLIB_VERSION := 1.3.1
+ZLIB_DIR := $(ZLIB_NAME)-$(ZLIB_VERSION)
+ZLIB_FILENAME := $(ZLIB_DIR).tar.xz
+ZLIB_URL := https://github.com/madler/$(ZLIB_NAME)/releases/download/v$(ZLIB_VERSION)/$(ZLIB_FILENAME)
+
+$(call download_and_extract_tar,$(ZLIB_URL),$(ZLIB_FILENAME),$(ZLIB_DIR),src/$(ZLIB_NAME))
+
 ZSTD_NAME := zstd
 ZSTD_VERSION := 1.5.7
 ZSTD_DIR := $(ZSTD_NAME)-$(ZSTD_VERSION)
@@ -55,7 +63,7 @@ $(call download_and_extract_tar,$(ZSTD_URL),$(ZSTD_FILENAME),$(ZSTD_DIR),src/$(Z
 dist:
 	mkdir -p $@
 
-dist/%/$(BIN_NAME): build.sh | src src/lz4 src/lzo src/xz src/zstd dist
+dist/%/$(BIN_NAME): build.sh | src src/lz4 src/lzo src/xz src/zlib src/zstd dist
 	+bash build.sh $(patsubst dist/%/$(BIN_NAME),%,$@) $(MAKE)
 
 .PHONY: $(SUPPORTED_ARCHES)
