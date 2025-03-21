@@ -84,7 +84,7 @@ prepare() {
 
 build() {
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    MAKEFLAGS="" "${MAKE[@]}"
+    "${MAKE[@]}"
 }
 
 package() {

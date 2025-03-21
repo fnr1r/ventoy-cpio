@@ -52,7 +52,7 @@ TARGET_BIN="xzminidec"
 build() {
     cd userspace
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    MAKEFLAGS="" "${MAKE[@]}" "$TARGET_BIN"
+    "${MAKE[@]}" "$TARGET_BIN"
 }
 
 package() {

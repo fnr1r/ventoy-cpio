@@ -86,7 +86,7 @@ BIN_NAME="dmsetup"
 
 build() {
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    MAKEFLAGS="" "${MAKE[@]}" CFLAGS="$CFLAGS"
+    "${MAKE[@]}" CFLAGS="$CFLAGS"
 }
 
 package() {

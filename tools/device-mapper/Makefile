@@ -26,7 +26,7 @@ dist:
 	mkdir -p $@
 
 dist/%/$(BIN_NAME): build.sh | src dist
-	+bash build.sh $(patsubst dist/%/$(BIN_NAME),%,$@) $(MAKE)
+	+MAKEFLAGS="$$MFLAGS" bash build.sh $(patsubst dist/%/$(BIN_NAME),%,$@) $(MAKE)
 
 .PHONY: $(SUPPORTED_ARCHES)
 $(foreach arch,$(SUPPORTED_ARCHES), $(eval \

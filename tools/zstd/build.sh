@@ -57,7 +57,7 @@ TARGET_BIN="zstd"
 build() {
     cd programs
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    MAKEFLAGS="" "${MAKE[@]}" "$TARGET_BIN"
+    "${MAKE[@]}" "$TARGET_BIN"
 }
 
 package() {
