@@ -6,7 +6,7 @@ to Ventoy.
 ## Progress
 
 - ventoy.cpio - 100%
-- ventoy_ARCH.cpio - ~20%
+- ventoy_ARCH.cpio - ~40%
 
 ## Notes
 
