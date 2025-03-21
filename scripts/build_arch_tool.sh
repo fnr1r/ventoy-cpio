@@ -17,10 +17,10 @@ copy_with() {
         "dmsetup${suffix}"
     cp -a \
         "$REPO_DIR/tools/squashfs/dist/${arch}/unsquashfs" \
-        "unsquashfs${suffix}"
+        "unsquashfs_${suffix}"
     cp -a \
         "$REPO_DIR/tools/vtoytool/dist/${arch}/vtoytool" \
-        "vtoytool${suffix}"
+        "vtoytool/00/vtoytool_${suffix}"
     cp -a \
         "$REPO_DIR/tools/zstd/dist/${arch}/zstdcat" \
         "zstdcat${suffix}"
@@ -43,7 +43,14 @@ prepare_files_mips64() {
 prepare_files() {
     mkdir tool
     pushd tool > /dev/null
+    mkdir -p vtoytool/{00,01,02}
     "prepare_files_$ARCH"
+    cp -a \
+        "$REPO_DIR/tools/vtoytool/dist/x86_64/vtoytool" \
+        "vtoytool/01/vtoytool_64"
+    cp -a \
+        "$REPO_DIR/tools/vtoytool/dist/x86_64/vtoytool" \
+        "vtoytool/02/vtoytool_64"
     popd > /dev/null
 }
 
