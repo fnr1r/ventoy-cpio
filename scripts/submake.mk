@@ -1,8 +1,5 @@
 IS_BUILT_DIR := .is_built.d
 
-$(IS_BUILT_DIR):
-	mkdir -p $@
-
 # Defines a Makefile and adds it as a dependency of submakes
 #
 # arg1: id
@@ -16,6 +13,7 @@ $1_TARGET := $(if $3,$3,$1)
 $(eval
 $(IS_BUILT_DIR)/$1:
 	+$(MAKE) -C $2
+	@touch $(IS_BUILT_DIR)/$1
 .PHONY: $($1_TARGET)
 $($1_TARGET): $(IS_BUILT_DIR)/$1
 $(if $4, $4: $($1_TARGET),)
