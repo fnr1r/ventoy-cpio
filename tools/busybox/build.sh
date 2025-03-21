@@ -77,6 +77,8 @@ prepare() {
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
     if [[ "$PROG" == "busybox" ]]; then
         "${MAKE[@]}" defconfig > /dev/null
+        sed -i "s|# CONFIG_STATIC is not set|CONFIG_STATIC=y|" .config
+        "${MAKE[@]}" oldconfig
     else
         cp -a "$HERE/configs/$CONFIG_NAME" .config
     fi
