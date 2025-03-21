@@ -17,7 +17,7 @@ else ifeq ($(ARCH),aarch64)
 CC := diet aarch64-linux-gnu-gcc
 STRIP := aarch64-linux-gnu-strip --strip-all 
 else ifeq ($(ARCH),mips64el)
-CC := mips64el-linux-musl-gcc
+CC := diet mips64el-linux-musl-gcc
 CFLAGS := -march=mips64r2 -mabi=64 $(CFLAGS)
 STRIP := mips64el-linux-musl-strip --strip-all
 else
