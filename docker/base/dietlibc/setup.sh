@@ -42,6 +42,11 @@ main() {
     dest="/tmp/dietlibc_build"
     download_and_extract "https://www.fefe.de/dietlibc/dietlibc-0.34.tar.xz" "dietlibc-0.34" "$dest"
     pushd "$dest" > /dev/null
+    if [[ "${1:-}" == "386" ]]; then
+        make prefix=/opt/diet32 MYARCH=i386 all
+        make prefix=/opt/diet32 MYARCH=i386 install
+        exit 0
+    fi
     make ARCH=x86_64 CC=gcc all
     make ARCH=i386 EXTRACFLAGS="-m32" all
     make ARCH=aarch64 CROSS=aarch64-linux-gnu- all

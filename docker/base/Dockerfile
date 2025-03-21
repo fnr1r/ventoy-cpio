@@ -1,3 +1,15 @@
+FROM --platform=linux/386 ubuntu:18.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
+    apt-get update
+
+RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
+    apt-get install -y gcc make xz-utils
+
+RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
+    --mount=type=bind,source=dietlibc,target=/tmp/dietlibc \
+    bash /tmp/dietlibc/setup.sh 386
+
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN --mount=type=cache,target=/var/lib/apt/lists \
@@ -39,6 +51,8 @@ RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=
 
 ENV DIETLIBC="/opt/diet"
 ENV PATH="${PATH}:${DIETLIBC}/bin"
+
+COPY --from=0 /opt/diet32 /opt/diet32
 
 RUN --mount=type=cache,target=/var/cache/apt/archives --mount=type=cache,target=/var/lib/apt/lists \
     apt-get install -y liblz4-dev liblzma-dev liblzo2-dev libzstd-dev zlib1g-dev

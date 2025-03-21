@@ -5,6 +5,8 @@ $(error "ARCH not defined")
 endif
 
 CFLAGS := -Os -static
+DIET := diet
+DIETFLAGS :=
 STRIPFLAGS :=
 
 ifeq ($(ARCH),x86_64)
@@ -14,6 +16,7 @@ STRIPFLAGS := --strip-all
 else ifeq ($(ARCH),i386)
 CC := gcc
 CFLAGS := -m32 $(CFLAGS)
+DIET := /opt/diet32/bin/diet
 STRIP := strip
 else ifeq ($(ARCH),aarch64)
 CC := aarch64-linux-gnu-gcc
@@ -33,7 +36,7 @@ WITH_DIET := yes
 endif
 
 ifeq ($(WITH_DIET),yes)
-CC := diet $(CC)
+CC := $(DIET) $(DIETFLAGS) $(CC)
 endif
 
 SRC_DIR := $(HERE)
