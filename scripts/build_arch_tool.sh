@@ -19,6 +19,9 @@ copy_with() {
         "$REPO_DIR/tools/squashfs/dist/${arch}/unsquashfs" \
         "unsquashfs${suffix}"
     cp -a \
+        "$REPO_DIR/tools/vtoytool/dist/${arch}/vtoytool" \
+        "vtoytool${suffix}"
+    cp -a \
         "$REPO_DIR/tools/zstd/dist/${arch}/zstdcat" \
         "zstdcat${suffix}"
 }
@@ -28,24 +31,8 @@ prepare_files_arm64() {
 }
 
 prepare_files_x86() {
-    cp -a \
-        "$REPO_DIR/tools/device-mapper/dist/i386/dmsetup" \
-        dmsetup32
-    cp -a \
-        "$REPO_DIR/tools/device-mapper/dist/x86_64/dmsetup" \
-        dmsetup64
-    cp -a \
-        "$REPO_DIR/tools/squashfs/dist/i386/unsquashfs" \
-        unsquashfs32
-    cp -a \
-        "$REPO_DIR/tools/squashfs/dist/x86_64/unsquashfs" \
-        unsquashfs64
-    cp -a \
-        "$REPO_DIR/tools/zstd/dist/i386/zstdcat" \
-        zstdcat32
-    cp -a \
-        "$REPO_DIR/tools/zstd/dist/x86_64/zstdcat" \
-        zstdcat64
+    copy_with i386 32
+    copy_with x86_64 64
 }
 
 prepare_files_mips64() {
