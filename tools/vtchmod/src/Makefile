@@ -4,24 +4,36 @@ ifndef ARCH
 $(error "ARCH not defined")
 endif
 
-CFLAGS := -Os -MMD
+CFLAGS := -Os -static
+STRIPFLAGS :=
 
 ifeq ($(ARCH),x86_64)
-CC := diet gcc
+CC := gcc
 STRIP := strip
+STRIPFLAGS := --strip-all
 else ifeq ($(ARCH),i386)
-CC := diet gcc
+CC := gcc
 CFLAGS := -m32 $(CFLAGS)
-STRIP := strip --strip-all
+STRIP := strip
 else ifeq ($(ARCH),aarch64)
-CC := diet aarch64-linux-gnu-gcc
-STRIP := aarch64-linux-gnu-strip --strip-all 
+CC := aarch64-linux-gnu-gcc
+STRIP := aarch64-linux-gnu-strip
+STRIPFLAGS := --strip-all
 else ifeq ($(ARCH),mips64el)
-CC := diet mips64el-linux-musl-gcc
+CC := mips64el-linux-musl-gcc
 CFLAGS := -march=mips64r2 -mabi=64 $(CFLAGS)
-STRIP := mips64el-linux-musl-strip --strip-all
+STRIP := mips64el-linux-musl-strip
+STRIPFLAGS := --strip-all
 else
 $(error "ARCH is invalid")
+endif
+
+ifndef WITH_DIET
+WITH_DIET := yes
+endif
+
+ifeq ($(WITH_DIET),yes)
+CC := diet $(CC)
 endif
 
 SRC_DIR := $(HERE)
@@ -31,18 +43,18 @@ DIST_DIR := $(PROJECT_DIR)/dist
 TARGET_DIR := $(DIST_DIR)/$(ARCH)
 WORK_DIR := $(BUILD_DIR)/$(ARCH)
 
-BINS := $(TARGET_DIR)/vtchmod
+BINS := $(WORK_DIR)/vtchmod.debug $(TARGET_DIR)/vtchmod
 
 .PHONY: all build
 all: build
 build: $(BINS)
 
-$(TARGET_DIR)/vtchmod: $(WORK_DIR)/vtchmod.debug
+$(TARGET_DIR)/%: $(WORK_DIR)/%.debug
 	cp -a $< $(patsubst %.debug,%,$<)
-	$(STRIP) $(patsubst %.debug,%,$<)
+	$(STRIP) $(STRIPFLAGS) $(patsubst %.debug,%,$<)
 	mkdir -p $(dir $@)
 	mv $(patsubst %.debug,%,$<) $@
 
-$(WORK_DIR)/vtchmod.debug: $(SRC_DIR)/vtchmod.c
+$(WORK_DIR)/%.debug: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(CC) -o $@ $(patsubst $(WORK_DIR)/%.debug,$(SRC_DIR)/%.c,$@)
+	$(CC) $(CFLAGS) -o $@ $(patsubst $(WORK_DIR)/%.debug,$(SRC_DIR)/%.c,$@)
