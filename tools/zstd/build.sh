@@ -8,7 +8,6 @@ HERE="$(dirname "$(readlink -f -- "$0")")"
 . "$SCRIPTS_DIR/tool_build.sh"
 
 ARCH=""
-DIST_DIR=""
 CC=""
 MAKEBIN=()
 MAKEOPTS=()
@@ -16,8 +15,6 @@ STRIP_CMD=()
 
 argparse() {
     ARCH="$1"
-    DIST_DIR="$HERE/dist/$ARCH"
-    CC=""
     MAKEBIN=("${@:2}")
     MAKEOPTS=()
 
@@ -46,10 +43,13 @@ argparse() {
     MAKEOPTS+=(
         "CC=$CC"
     )
+
+    BUILD_SUB_DIR="$ARCH"
+    TARGET_SUB_DIR="$ARCH"
 }
 
 copysrc() {
-    cp -ar src/. "$TMP_DIR"
+    cp -ar --reflink=auto src/. "$WORK_DIR"
 }
 
 TARGET_BIN="zstd"
@@ -57,14 +57,13 @@ TARGET_BIN="zstd"
 build() {
     cd programs
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    "${MAKE[@]}" "$TARGET_BIN"
+    MAKEFLAGS="" "${MAKE[@]}" "$TARGET_BIN"
 }
 
 package() {
-    mkdir -p "$DIST_DIR"
-    cp -ar "$TARGET_BIN" "$DIST_DIR/zstdcat.debug"
+    cp -ar "$TARGET_BIN" "$TARGET_DIR/zstdcat.debug"
     "${STRIP_CMD[@]}" "$TARGET_BIN"
-    mv "$TARGET_BIN" "$DIST_DIR/zstdcat"
+    mv "$TARGET_BIN" "$TARGET_DIR/zstdcat"
 }
 
 main "$@"

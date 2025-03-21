@@ -18,7 +18,7 @@ SRC_URL := ftp://sourceware.org/pub/dm/$(SRC_FILENAME)
 all: build
 build: $(SUPPORTED_TARGETS)
 clean:
-	-rm -r dist src
+	-rm -r build dist src
 
 $(call download_and_extract_tar,$(SRC_URL),$(SRC_FILENAME),$(SRC_DIR),src)
 

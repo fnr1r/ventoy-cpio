@@ -58,17 +58,22 @@ argparse() {
         x86)
             ARCH="${arch}_${prog}"
             PROG="${prog2}"
-            if [[ "$PROG" != "busybox" ]]; then
-                MAKEOPTS+=("CC=musl-gcc")
-            fi
+            #if [[ "$PROG" != "busybox" ]]; then
+            #    MAKEOPTS+=("CC=musl-gcc")
+            #fi
             ;;
         *)
             exit 69
             ;;
     esac
+
+    BUILD_SUB_DIR="$BIN_NAME"
+    TARGET_SUB_DIR="$ARCH"
 }
 
 prepare() {
+    #echo "$WORK_DIR"
+    #exit 1
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
     if [[ "$PROG" == "busybox" ]]; then
         "${MAKE[@]}" defconfig > /dev/null
@@ -79,18 +84,15 @@ prepare() {
 
 build() {
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    "${MAKE[@]}"
+    MAKEFLAGS="" "${MAKE[@]}"
 }
 
 package() {
-    target_path="$HERE/dist/$BIN_NAME"
-    mv busybox "$target_path"
+    mv busybox "$HERE/dist/$BIN_NAME"
 }
 
 postbuild() {
-    alt_target_dir="$HERE/dist/$ARCH"
-    mkdir -p "$alt_target_dir"
-    ln -s "../$BIN_NAME" "$alt_target_dir/$PROG"
+    ln -s "../$BIN_NAME" "$TARGET_DIR/$PROG"
 }
 
 main "$@"

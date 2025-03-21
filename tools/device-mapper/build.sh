@@ -9,7 +9,7 @@ HERE="$(dirname "$(readlink -f -- "$0")")"
 
 ARCH=""
 CC=""
-DIST_DIR=""
+CFLAGS=""
 MAKEBIN=()
 MAKEOPTS=()
 
@@ -31,85 +31,69 @@ add_uint_defines() {
 EOF
 }
 
-OS_INCLUDE="/usr/include"
-FS_H="$OS_INCLUDE/linux/fs.h"
-
-patch_builtin_fs() {
-    if [[ -f "$FS_H.bak" ]]; then
-        return
-    fi
-    sudo mv "$FS_H" "$FS_H.bak"
-    echo '#include <sys/mount.h>' | sudo tee "$FS_H" > /dev/null
-}
-
-unpatch_builtin_fs() {
-    if [[ -f "$FS_H.bak" ]]; then
-        sudo rm "$FS_H"
-        sudo mv "$FS_H.bak" "$FS_H"
-    fi
-}
-
 argparse() {
     ARCH="$1"
     CONFIGURE_OPTS=()
-    DIST_DIR="$HERE/dist/$ARCH"
     MAKEBIN=("${@:2}")
     MAKEOPTS=()
+
+    CFLAGS="-I$HERE/include"
 
     case $ARCH in
         aarch64)
             CC="diet aarch64-linux-gnu-gcc"
-            CONFIGURE_OPTS=(--target=arm --host=x86_64-linux-gnu)
+            CONFIGURE_OPTS=(--host=arm-linux)
             STRIP_CMD=(aarch64-linux-gnu-strip)
             ;;
         i386)
             CC="diet gcc"
-            MAKEOPTS+=(
-                "CFLAGS+=-m32"
-            )
+            CFLAGS+=" -m32"
+            CONFIGURE_OPTS=(--host=i386-linux)
             STRIP_CMD=(strip)
             ;;
         mips64el)
             CC="diet mips64el-linux-musl-gcc"
-            CONFIGURE_OPTS=(--target=mips64el --host=x86_64-linux-gnu)
+            CONFIGURE_OPTS=(--host=mips64el-linux)
             STRIP_CMD=(mips64el-linux-musl-strip)
-            FS_H="/opt/mips64el-linux-gnu-musl-gcc7.3.0/mips64el-linux-musl/include/linux/fs.h"
             ;;
         x86_64)
             CC="diet gcc"
+            CFLAGS+=" -fPIC"
             STRIP_CMD=(strip --strip-all)
             ;;
         *)
             exit 69
             ;;
     esac
+
+    BUILD_SUB_DIR="$ARCH"
+    TARGET_SUB_DIR="$ARCH"
 }
 
 copysrc() {
-    cp -ar src/. "$TMP_DIR"
+    cp -ar --reflink=auto src/. "$WORK_DIR"
 }
 
 prepare() {
-    ./configure CC="$CC" \
-        "${CONFIGURE_OPTS[@]}" \
-        --disable-nls --disable-selinux --disable-shared
+    ./configure --disable-nls --disable-selinux \
+        --disable-shared --enable-static_link \
+        "${CONFIGURE_OPTS[@]}" "CC=$CC"
     no_rpl_malloc
     add_uint_defines
-    patch_builtin_fs
 }
+
+BIN_NAME="dmsetup"
 
 build() {
     MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    "${MAKE[@]}" dmsetup
-    unpatch_builtin_fs
+    MAKEFLAGS="" "${MAKE[@]}" CFLAGS="$CFLAGS"
 }
 
 package() {
-    TARGET_BIN="dmsetup/dmsetup"
-    mkdir -p "$DIST_DIR"
-    cp -ar "$TARGET_BIN" "$DIST_DIR/dmsetup.debug"
+    TARGET_BIN="$BIN_NAME/$BIN_NAME.static"
+    cp -ar "$TARGET_BIN" "$TARGET_DIR/$BIN_NAME.debug"
     "${STRIP_CMD[@]}" "$TARGET_BIN"
-    mv "$TARGET_BIN" "$DIST_DIR/dmsetup"
+    mv "$TARGET_BIN" "$TARGET_DIR/$BIN_NAME"
 }
 
 main "$@"
