@@ -5,8 +5,32 @@ to Ventoy.
 
 ## Progress
 
-- ventoy.cpio - 100%
-- ventoy_ARCH.cpio - ~40%
+It boots, but some functionality might not work.
+
+### ventoy.cpio
+
+100%, since it's literally just xz-ing a bunch of files.
+
+Size ratio:
+
+- du - 1 (64 / 64)
+- ls -l - 1.016129032258065 (64512 / 63488)
+
+### ventoy_ARCH.cpio
+
+~50%
+
+Size ratio:
+
+- du - 1.873124147339700 (5492 / 2932)
+- ls -l - 1.872888585565603 (5620224 / 3000832)
+
+## Building
+
+```sh
+docker compose build
+docker compose up
+```
 
 ## Notes
 
