@@ -16,6 +16,9 @@ copy_with() {
         "$REPO_DIR/tools/device-mapper/dist/${arch}/dmsetup" \
         "dmsetup${suffix}"
     cp -a \
+        "$REPO_DIR/tools/lz4/dist/${arch}/lz4cat" \
+        "lz4cat${suffix}"
+    cp -a \
         "$REPO_DIR/tools/squashfs/dist/${arch}/unsquashfs" \
         "unsquashfs_${suffix}"
     cp -a \
@@ -33,7 +36,7 @@ prepare_files_arm64() {
 prepare_files_x86() {
     copy_with i386 32
     copy_with x86_64 64
-    cp -a "$REPO_DIR/tools_extra/vtoytool_install.sh" .
+    ln -s lz4cat32 lz4cat
 }
 
 prepare_files_mips64() {
@@ -45,6 +48,7 @@ prepare_files() {
     pushd tool > /dev/null
     mkdir -p vtoytool/{00,01,02}
     "prepare_files_$ARCH"
+    cp -a "$REPO_DIR/tools_extra/vtoytool_install.sh" .
     cp -a \
         "$REPO_DIR/tools/vtoytool/dist/x86_64/vtoytool" \
         "vtoytool/01/vtoytool_64"
