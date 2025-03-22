@@ -49,11 +49,11 @@ main() {
     fi
     make ARCH=x86_64 CC=gcc all
     make ARCH=i386 EXTRACFLAGS="-m32" all
-    make ARCH=aarch64 CROSS=aarch64-linux-gnu- all
+    make ARCH=aarch64 CROSS=aarch64-linux- all
     make ARCH=mips64 CROSS=mips64el-linux-musl- all
     make ARCH=x86_64 CC=gcc install
     make ARCH=i386 EXTRACFLAGS="-m32" install
-    make ARCH=aarch64 CROSS=aarch64-linux-gnu- install
+    make ARCH=aarch64 CROSS=aarch64-linux- install
     make ARCH=mips64 CROSS=mips64el-linux-musl- install
     popd > /dev/null
     rm -r "$dest"
