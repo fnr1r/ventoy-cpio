@@ -33,7 +33,7 @@ argparse() {
         aarch64)
             MAKEOPTS+=(
                 "ARCH=arm64"
-                "CROSS_COMPILE=aarch64-linux-gnu-"
+                "CROSS_COMPILE=aarch64-linux-"
                 "CFLAGS+=-Os"
             )
             ;;
