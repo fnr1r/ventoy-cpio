@@ -41,9 +41,10 @@ argparse() {
 
     case $ARCH in
         aarch64)
-            CC="diet aarch64-linux-gnu-gcc"
+            CC="diet aarch64-linux-gcc"
+            CFLAGS+=" -fPIC"
             CONFIGURE_OPTS=(--host=arm-linux)
-            STRIP_CMD=(aarch64-linux-gnu-strip)
+            STRIP_CMD=(aarch64-linux-strip)
             ;;
         i386)
             CC="diet gcc"

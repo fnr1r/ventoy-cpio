@@ -19,7 +19,7 @@ argparse() {
 
     case $ARCH in
         aarch64)
-            STRIP_CMD=(aarch64-linux-gnu-strip)
+            STRIP_CMD=(aarch64-linux-strip)
             ;;
         i386)
             STRIP_CMD=(strip)

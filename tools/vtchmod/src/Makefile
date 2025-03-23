@@ -19,8 +19,8 @@ CFLAGS := -m32 $(CFLAGS)
 DIET := /opt/diet32/bin/diet
 STRIP := strip
 else ifeq ($(ARCH),aarch64)
-CC := aarch64-linux-gnu-gcc
-STRIP := aarch64-linux-gnu-strip
+CC := aarch64-linux-gcc
+STRIP := aarch64-linux-strip
 STRIPFLAGS := --strip-all
 else ifeq ($(ARCH),mips64el)
 CC := mips64el-linux-musl-gcc

@@ -22,8 +22,8 @@ argparse() {
 
     case $ARCH in
         aarch64)
-            CC="aarch64-linux-gnu-gcc"
-            STRIP_CMD=(aarch64-linux-gnu-strip)
+            CC="aarch64-linux-gcc"
+            STRIP_CMD=(aarch64-linux-strip)
             ;;
         i386)
             CC="gcc -m32"

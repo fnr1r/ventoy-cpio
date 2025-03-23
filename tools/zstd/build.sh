@@ -20,8 +20,8 @@ argparse() {
 
     case $ARCH in
         aarch64)
-            CC="diet aarch64-linux-gnu-gcc"
-            STRIP_CMD=(aarch64-linux-gnu-strip)
+            CC="diet aarch64-linux-gcc"
+            STRIP_CMD=(aarch64-linux-strip)
             ;;
         i386)
             CC="diet gcc -m32"

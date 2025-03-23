@@ -19,7 +19,7 @@ CC := diet gcc -m32
 else ifeq ($(ARCH),x86_64)
 CC := diet gcc
 else ifeq ($(ARCH),aarch64)
-CC := aarch64-linux-gnu-gcc -static  
+CC := aarch64-linux-gcc -static  
 else ifeq ($(ARCH),mips64el)
 CC := mips64el-linux-musl-gcc -mips64r2 -mabi=64 -static
 else

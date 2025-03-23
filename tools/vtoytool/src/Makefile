@@ -20,9 +20,9 @@ CFLAGS := -m32 $(CFLAGS) -DVTOY_I386
 DIET := /opt/diet32/bin/diet
 STRIP := strip
 else ifeq ($(ARCH),aarch64)
-CC := aarch64-linux-gnu-gcc
+CC := aarch64-linux-gcc
 CFLAGS := $(CFLAGS) -DVTOY_AA64
-STRIP := aarch64-linux-gnu-strip
+STRIP := aarch64-linux-strip
 STRIPFLAGS := --strip-all
 else ifeq ($(ARCH),mips64el)
 CC := mips64el-linux-musl-gcc

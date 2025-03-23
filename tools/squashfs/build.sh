@@ -34,9 +34,9 @@ argparse() {
 
     case $ARCH in
         aarch64)
-            CC="aarch64-linux-gnu-gcc"
+            CC="aarch64-linux-gcc"
             CONFIGURE_OPTS=(--host=arm-linux)
-            STRIP_CMD=(aarch64-linux-gnu-strip)
+            STRIP_CMD=(aarch64-linux-strip)
             ;;
         i386)
             CC="gcc"
