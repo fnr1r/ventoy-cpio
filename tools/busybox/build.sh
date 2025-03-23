@@ -74,16 +74,34 @@ argparse() {
 }
 
 prepare() {
-    #echo "$WORK_DIR"
-    #exit 1
-    MAKE=("${MAKEBIN[@]}" "${MAKEOPTS[@]}")
-    if [[ "$PROG" == "busybox" ]]; then
-        "${MAKE[@]}" defconfig > /dev/null
-        sed -i "s|# CONFIG_STATIC is not set|CONFIG_STATIC=y|" .config
-        "${MAKE[@]}" oldconfig
-    else
-        cp -a "$HERE/configs/$CONFIG_NAME" .config
+    local config=""
+    case $PROG in
+        ash)
+            if [[ "$ARCH" == "aarch64" ]]; then
+                config="$HERE/configs/04-ash-internal-glob.config"
+            elif [[ "$ARCH" == "mips64el" ]]; then
+                config="$HERE/configs/02-ash-only.config"
+            else
+                config="$HERE/configs/03-ash-extras.config"
+            fi
+            ;;
+        busybox)
+            config="$HERE/configs/01-defconfig-static.config"
+            ;;
+        hexdump)
+            config="$HERE/configs/03-hexdump.config"
+            ;;
+        xzcat)
+            config="$HERE/configs/03-xzcat-only.config"
+            ;;
+        *)
+            exit 69
+            ;;
+    esac
+    if [[ -z "$config" ]]; then
+        exit 69
     fi
+    cp -aL "$config" .config
 }
 
 build() {

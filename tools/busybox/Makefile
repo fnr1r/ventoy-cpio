@@ -14,8 +14,6 @@ SRC_DIR := $(NAME)-$(VERSION)
 SRC_FILENAME := $(SRC_DIR).tar.bz2
 SRC_URL := https://busybox.net/downloads/$(SRC_FILENAME)
 
-CONFIGS := $(patsubst configs/%.config,dist/%,$(wildcard configs/*.config))
-
 .PHONY: all build clean
 all: build
 build: $(SUPPORTED_TARGETS)
