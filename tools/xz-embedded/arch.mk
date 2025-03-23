@@ -19,7 +19,7 @@ CC := diet gcc -m32
 else ifeq ($(ARCH),x86_64)
 CC := diet gcc
 else ifeq ($(ARCH),aarch64)
-CC := aarch64-linux-gcc -static  
+CC := aarch64-linux-gcc -static
 else ifeq ($(ARCH),mips64el)
 CC := mips64el-linux-musl-gcc -mips64r2 -mabi=64 -static
 else
@@ -28,8 +28,6 @@ endif
 
 #CC = gcc -specs "/usr/local/musl/lib/musl-gcc.specs" -Os -static  -std=gnu89
 
-BCJ_CPPFLAGS = -DXZ_DEC_X86 -DXZ_DEC_POWERPC -DXZ_DEC_IA64 \
-		-DXZ_DEC_ARM -DXZ_DEC_ARMTHUMB -DXZ_DEC_SPARC
 CPPFLAGS = -DXZ_USE_CRC64 -DXZ_DEC_ANY_CHECK
 CFLAGS = -ggdb3 -O2 -pedantic -Wall -Wextra $(EXTRACFLAGS)
 RM = rm -f
@@ -43,7 +41,7 @@ BOOTTEST_OBJS = boottest.o
 XZ_HEADERS = xz.h xz_private.h xz_stream.h xz_lzma2.h xz_config.h
 PROGRAMS = xzminidec bytetest buftest boottest
 
-ALL_CPPFLAGS = -I../linux/include/linux -I. $(BCJ_CPPFLAGS) $(CPPFLAGS)
+ALL_CPPFLAGS = -I../linux/include/linux -I. $(CPPFLAGS)
 
 all: $(PROGRAMS)
 
