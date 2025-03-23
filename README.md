@@ -39,7 +39,7 @@ It boots, but some functionality might not work.
 Size ratio:
 
 - du - 1 (64 / 64)
-- ls -l - 1.016129032258065 (64512 / 63488)
+- ls -l - 1 (62976 / 62976)
 
 ### ventoy_ARCH.cpio
 
@@ -48,14 +48,17 @@ Size ratio:
 Size ratio (x86):
 
 - du - 1.873124147339700 (5492 / 2932)
-- ls -l - 1.872888585565603 (5620224 / 3000832)
+- ls -l - 1,892087571108430 (5619712 / 2970112)
 
-### NOTE
+Size ratio (arm64):
 
-These comparisons are with Ventoy 1.0.97 and not with 1.0.99 which this project
-is based on.
+- du - 1,808716707021792 (2988 / 1652)
+- ls -l - 1,810491206791995 (3057152 / 1688576)
 
-TODO: Rebase on the latest version and fix this.
+Size ratio (mips64):
+
+- du - 1,805860805860806 (1972 / 1092)
+- ls -l - 1,806792106470858 (2015744 / 1115648)
 
 ## Building
 
