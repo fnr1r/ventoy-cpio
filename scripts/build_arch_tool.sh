@@ -19,6 +19,9 @@ copy_with() {
         "$REPO_DIR/tools/lz4/dist/${arch}/lz4cat" \
         "lz4cat${suffix}"
     cp -a \
+        "$REPO_DIR/tools/lunzip/dist/${arch}/lunzip" \
+        "lunzip${suffix}"
+    cp -a \
         "$REPO_DIR/tools/squashfs/dist/${arch}/unsquashfs" \
         "unsquashfs_${suffix}"
     cp -a \
