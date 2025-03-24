@@ -24,6 +24,11 @@ copy_with() {
     cp -a \
         "$REPO_DIR/tools/squashfs/dist/${arch}/unsquashfs" \
         "unsquashfs_${suffix}"
+    if [[ "$arch" != "mips64el" ]]; then
+        cp -a \
+            "$REPO_DIR/tools/vblade/dist/${arch}/vblade" \
+            "vblade_${suffix}"
+    fi
     cp -a \
         "$REPO_DIR/tools/vtoytool/dist/${arch}/vtoytool" \
         "vtoytool/00/vtoytool_${suffix}"
