@@ -7,7 +7,7 @@ build: tools
 clean:
 tools: 
 
-TOOLS := busybox device-mapper lz4 squashfs vtchmod vtoytool xz-embedded zstd
+TOOLS := busybox device-mapper lz4 squashfs vtchmod vtoy_fuse_iso vtoytool xz-embedded zstd
 
 include $(SCRIPTS_DIR)/submake.mk
 

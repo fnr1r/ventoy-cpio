@@ -31,6 +31,9 @@ copy_with() {
 
 prepare_files_arm64() {
     copy_with aarch64 aa64
+    cp -a \
+        "$REPO_DIR/tools/vtoy_fuse_iso/dist/aarch64/vtoy_fuse_iso" \
+        "vtoy_fuse_iso_aa64"
 }
 
 prepare_files_x86() {
@@ -41,6 +44,9 @@ prepare_files_x86() {
 
 prepare_files_mips64() {
     copy_with mips64el m64e
+    cp -a \
+        "$REPO_DIR/tools/vtoy_fuse_iso/dist/mips64el/vtoy_fuse_iso" \
+        "vtoy_fuse_iso_m64e"
 }
 
 prepare_files() {
