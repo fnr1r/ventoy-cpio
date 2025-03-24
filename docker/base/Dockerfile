@@ -24,6 +24,10 @@ RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archiv
     --mount=type=cache,id=/var/lib/apt/lists-2,target=/var/lib/apt/lists \
     apt-get install -y gcc gcc-multilib
 
+RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archives \
+    --mount=type=cache,id=/var/lib/apt/lists-2,target=/var/lib/apt/lists \
+    apt-get install -y patch
+
 COPY --from=0 /opt/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu /opt/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu
 COPY --from=0 /opt/aarch64--uclibc--stable-2020.08-1 /opt/aarch64--uclibc--stable-2020.08-1
 COPY --from=0 /opt/mips-loongson-gcc7.3-2019.06-29-linux-gnu /opt/mips-loongson-gcc7.3-2019.06-29-linux-gnu
@@ -51,6 +55,10 @@ RUN --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
 RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
     --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
     apt-get install -y gcc make xz-utils
+
+RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
+    --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
+    apt-get install -y patch
 
 RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
     --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
