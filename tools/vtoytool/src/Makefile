@@ -14,6 +14,7 @@ CC := gcc
 CFLAGS := $(CFLAGS) -DVTOY_X86_64
 STRIP := strip
 STRIPFLAGS := --strip-all
+WITH_DIET := no
 else ifeq ($(ARCH),i386)
 CC := gcc
 CFLAGS := -m32 $(CFLAGS) -DVTOY_I386
@@ -34,7 +35,7 @@ $(error "ARCH is invalid")
 endif
 
 ifndef WITH_DIET
-WITH_DIET := no
+WITH_DIET := yes
 endif
 
 ifeq ($(WITH_DIET),yes)
