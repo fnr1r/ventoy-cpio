@@ -40,6 +40,9 @@ prepare_files_x86() {
     copy_with i386 32
     copy_with x86_64 64
     ln -s lz4cat32 lz4cat
+    cp -a \
+        "$REPO_DIR/tools/vtoy_fuse_iso/dist/x86_64/vtoy_fuse_iso" \
+        "vtoy_fuse_iso_64"
 }
 
 prepare_files_mips64() {
