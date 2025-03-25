@@ -27,7 +27,7 @@ argparse() {
             STRIP_CMD=(aarch64-linux-strip)
             ;;
         i386)
-            CC="diet gcc -m32"
+            CC="diet32 gcc -m32"
             STRIP_CMD=(strip)
             ;;
         mips64el)

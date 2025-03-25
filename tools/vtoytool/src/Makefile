@@ -18,7 +18,7 @@ WITH_DIET := no
 else ifeq ($(ARCH),i386)
 CC := gcc
 CFLAGS := -m32 $(CFLAGS) -DVTOY_I386
-DIET := /opt/diet32/bin/diet
+DIET := diet32
 STRIP := strip
 else ifeq ($(ARCH),aarch64)
 CC := aarch64-linux-gcc

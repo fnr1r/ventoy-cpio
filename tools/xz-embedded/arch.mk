@@ -15,7 +15,7 @@ EXTRACFLAGS := -Os -DXZ_DEC_CONCATENATED
 # -std=gnu89: not used since it emits pointless warnings
 
 ifeq ($(ARCH),i386)
-CC := diet gcc -m32
+CC := diet32 gcc -m32
 else ifeq ($(ARCH),x86_64)
 CC := diet gcc
 else ifeq ($(ARCH),aarch64)

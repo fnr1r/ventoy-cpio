@@ -16,7 +16,7 @@ STRIPFLAGS := --strip-all
 else ifeq ($(ARCH),i386)
 CC := gcc
 CFLAGS := -m32 $(CFLAGS)
-DIET := /opt/diet32/bin/diet
+DIET := diet32
 STRIP := strip
 else ifeq ($(ARCH),aarch64)
 CC := aarch64-linux-gcc

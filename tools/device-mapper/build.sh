@@ -47,8 +47,7 @@ argparse() {
             STRIP_CMD=(aarch64-linux-strip)
             ;;
         i386)
-            CC="diet gcc"
-            CFLAGS+=" -m32"
+            CC="diet32 gcc -m32"
             CONFIGURE_OPTS=(--host=i386-linux)
             STRIP_CMD=(strip)
             ;;
