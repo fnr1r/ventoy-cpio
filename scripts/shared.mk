@@ -7,6 +7,7 @@ ARCHES_WITHOUT_I386 := x86_64 $(ARCHES_ARM) $(ARCHES_MIPS)
 ARCHES_WITHOUT_MIPS := $(ARCHES_X86) $(ARCHES_ARM)
 
 CURL_FLAGS ?= -L -s
+XZ_FLAGS ?= -e -9
 
 # decided to use curl for downloads d:
 #WGET_FLAGS ?= -q
