@@ -10,7 +10,7 @@ build: $(SUPPORTED_ARCHES)
 clean:
 	-rm -r build dist src
 
-.PHONY: src dist/%/%/(BIN_NAME)
+.PHONY: src dist/%/$(BIN_NAME)
 src:
 	+$(MAKE) -f source.mk
 dist/%/$(BIN_NAME): src
