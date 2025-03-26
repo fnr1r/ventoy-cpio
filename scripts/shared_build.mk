@@ -1,9 +1,12 @@
-ifndef TARGETS
-$(error "TARGETS not set")
+ifndef TARGET
+$(error TARGET is not defined)
 endif
 
-ifndef SUPPORTED_ARCHES
-$(error "SUPPORTED_ARCHES not set by the importer")
-endif
+.PHONY: all build clean
+all: build
+build:
+clean:
 
-SUPPORTED_TARGETS := $(strip $(foreach target,$(TARGETS),$(filter $(SUPPORTED_ARCHES),$(target))))
+BUILD_DIR := $(HERE)/build
+DIST_DIR := $(HERE)/dist
+SRC_DIR := $(HERE)/src
