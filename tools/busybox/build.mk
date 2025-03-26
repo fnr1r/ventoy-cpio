@@ -32,6 +32,7 @@ $(error ARCH invalid)
 endif
 
 CONFIG_FILENAME := $(CONFIG_$(call uppercase,$(BIN_NAME)))
+SOURCES = $(shell find $(SRC_DIR))
 
 ifdef CROSS_COMPILE
 export CROSS_COMPILE
