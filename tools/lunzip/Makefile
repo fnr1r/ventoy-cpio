@@ -1,31 +1,26 @@
 include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
+include meta.mk
 
 SUPPORTED_ARCHES := $(ARCHES_ALL)
 
-include $(SCRIPTS_DIR)/shared_build.mk
-
-NAME := lunzip
-VERSION := 1.11
-
-BIN_NAME := $(NAME)cat
-
-SRC_DIR := $(NAME)-$(VERSION)
-SRC_FILENAME := $(SRC_DIR).tar.gz
-SRC_URL := https://download.savannah.gnu.org/releases/lzip/$(NAME)/$(SRC_FILENAME)
-
-.PHONY: all build clean
+.PHONY: all build clean clean-src clean-all
 all: build
-build: $(SUPPORTED_TARGETS)
+build: $(SUPPORTED_ARCHES)
 clean:
-	-rm -r build dist src
+	-rm -r dist build
+clean-src: clean
+	+$(MAKE) -f source.mk clean
+clean-all: clean
+	+$(MAKE) -f source.mk clean-all
 
-$(call download_and_extract_tar,$(SRC_URL),$(SRC_FILENAME),$(SRC_DIR),src)
-
-dist/%/$(BIN_NAME): build.sh | src
-	+bash build.sh $(patsubst dist/%/$(BIN_NAME),%,$@) $(MAKE)
+.PHONY: src dist/%/$(BIN_NAME)
+src:
+	+$(MAKE) -f source.mk
+dist/%/$(BIN_NAME): src
+	+$(MAKE) -f build.mk TARGET=$(patsubst dist/%/$(BIN_NAME),%,$@)
 
 .PHONY: $(SUPPORTED_ARCHES)
-$(foreach arch,$(SUPPORTED_ARCHES), $(eval \
-	$(arch): dist/$(arch)/$(BIN_NAME)	\
-))
+$(foreach a,$(SUPPORTED_ARCHES), \
+	$(eval dist/$a/$(BIN_NAME):) $(eval $a: dist/$a/$(BIN_NAME)) \
+)
