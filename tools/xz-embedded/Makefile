@@ -1,34 +1,22 @@
 include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
+include meta.mk
 
 SUPPORTED_ARCHES := $(ARCHES_ALL)
 
-include $(SCRIPTS_DIR)/shared_build.mk
-
-NAME := xz-embedded
-VERSION := 2024-12-30
-
-BIN_NAME := xzminidec
-
-SRC_DIR := $(NAME)-$(VERSION)
-SRC_FILENAME := $(SRC_DIR).tar.gz
-SRC_URL := https://github.com/tukaani-project/$(NAME)/archive/refs/tags/v$(VERSION).tar.gz
-
 .PHONY: all build clean
 all: build
-build: $(SUPPORTED_TARGETS)
+build: $(SUPPORTED_ARCHES)
 clean:
 	-rm -r build dist src
 
-$(call download_and_extract_tar,$(SRC_URL),$(SRC_FILENAME),$(SRC_DIR),src)
-
-dist:
-	mkdir -p $@
-
-dist/%/$(BIN_NAME): build.sh | src dist
-	+bash build.sh $(patsubst dist/%/$(BIN_NAME),%,$@) $(MAKE)
+.PHONY: src dist/%/$(BIN_NAME)
+src:
+	+$(MAKE) -f source.mk
+dist/%/$(BIN_NAME): src
+	+$(MAKE) -f build.mk TARGET=$(patsubst dist/%/$(BIN_NAME),%,$@)
 
 .PHONY: $(SUPPORTED_ARCHES)
-$(foreach arch,$(SUPPORTED_ARCHES), $(eval \
-	$(arch): dist/$(arch)/$(BIN_NAME)	\
-))
+$(foreach a,$(SUPPORTED_ARCHES), \
+	$(eval dist/$a/$(BIN_NAME):) $(eval $a: dist/$a/$(BIN_NAME)) \
+)
