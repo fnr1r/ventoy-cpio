@@ -30,6 +30,7 @@ $3: $1
 	fi
 	tar xf $$<
 	mv $2 $$@
+	@touch $$@
 clean-$3:
 	@if [ -d "$2" ]; then \
 		rm -r $2; \
