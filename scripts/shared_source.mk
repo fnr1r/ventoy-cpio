@@ -22,9 +22,10 @@ endef
 # arg1: tar archive
 # arg2: unpacked directory
 # arg3: target directory
+# arg4: deps (optional)
 define extract_tar
 $(eval
-$3: $1
+$3: $1 | $4
 	@if [ -d "$$@" ]; then \
 		rm -r $$@; \
 	fi
@@ -36,7 +37,7 @@ clean-$3:
 		rm -r $2; \
 	fi
 	-rm -r $3
-clean: clean-$3
+clean $(foreach d,$4,clean-$d): clean-$3
 )
 endef
 
@@ -57,10 +58,10 @@ $(if $2,,$(error "$0: target file not speficied"))
 $(if $3,,$(error "$0: unpacked directory not speficied"))
 $(if $4,,$(error "$0: target directory not speficied"))
 $(call download,$1,$2)
-$(call extract_tar,$2,$3,$4)
+$(call extract_tar,$2,$3,$4,$5)
 endef
 
 define p_download_and_extract_tar
 $(if $1,,$(error "$0: prefix not speficied"))
-$(call download_and_extract_tar,$($1_URL),$($1_FILENAME),$($1_EXTRACTED),$($1_DIR))
+$(call download_and_extract_tar,$($1_URL),$($1_FILENAME),$($1_EXTRACTED),$($1_DIR),$($1_DIR_DEPS))
 endef

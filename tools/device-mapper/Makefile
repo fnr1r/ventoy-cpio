@@ -14,7 +14,7 @@ clean-src: clean
 clean-all: clean
 	+$(MAKE) -f source.mk clean-all
 
-.PHONY: src dist/%/$(BIN_NAME)
+.PHONY: src
 src:
 	+$(MAKE) -f source.mk
 dist/%/$(BIN_NAME): src
