@@ -2,10 +2,6 @@ include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 include meta.mk
 
-ifndef TARGET
-$(error TARGET is not defined)
-endif
-
 TARGET_DIR := $(DIST_DIR)/$(TARGET)
 WORK_DIR := $(BUILD_DIR)/$(TARGET)
 
@@ -55,6 +51,8 @@ export CFLAGS
 export WITH_DIETLIBC
 
 build: $(TARGET_DIR)/dmsetup $(TARGET_DIR)/dmsetup.debug
+clean:
+	-rm -r $(TARGET_DIR) $(WORK_DIR)
 
 $(WORK_DIR)/.copied: $(SOURCES)
 	@mkdir -p $(dir $@)

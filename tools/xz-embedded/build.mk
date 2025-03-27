@@ -2,10 +2,6 @@ include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 include meta.mk
 
-ifndef TARGET
-$(error TARGET is not defined)
-endif
-
 TARGET_DIR := $(DIST_DIR)/$(TARGET)
 WORK_DIR := $(BUILD_DIR)/$(TARGET)
 
@@ -58,6 +54,10 @@ VPATH := $(SRC_DIR)/userspace $(SRC_DIR)/linux/lib/xz
 vpath %.o $(WORK_DIR)
 
 build: $(TARGET_DIR)/xzminidec $(TARGET_DIR)/xzminidec.debug
+clean:
+	-rm -r $(TARGET_DIR) $(WORK_DIR)
+clean-all:
+	-rm -r $(DIST_DIR) $(BUILD_DIR)
 
 $(WORK_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)

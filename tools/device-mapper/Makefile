@@ -4,11 +4,15 @@ include meta.mk
 
 SUPPORTED_ARCHES := $(ARCHES_ALL)
 
-.PHONY: all build clean
+.PHONY: all build clean clean-src clean-all
 all: build
 build: $(SUPPORTED_ARCHES)
 clean:
-	-rm -r build dist src
+	-rm -r dist build
+clean-src: clean
+	+$(MAKE) -f source.mk clean
+clean-all: clean
+	+$(MAKE) -f source.mk clean-all
 
 .PHONY: src dist/%/$(BIN_NAME)
 src:

@@ -2,10 +2,6 @@ include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 include meta.mk
 
-ifndef TARGET
-$(error TARGET is not defined)
-endif
-
 WORK_DIR := $(BUILD_DIR)/$(TARGET)
 
 ARCH := $(call get_arch,$(TARGET))
@@ -40,14 +36,18 @@ endif
 export CC
 export CFLAGS
 
-build: $(DIST_DIR)/$(ARCH)-$(BIN_NAME) $(DIST_DIR)/$(ARCH)/$(BIN_NAME)
+TARGET_BINS := $(DIST_DIR)/$(ARCH)-$(BIN_NAME) $(DIST_DIR)/$(ARCH)/$(BIN_NAME)
+
+build: $(TARGET_BINS)
+clean:
+	-rm -r $(TARGET_BINS) $(WORK_DIR)
 
 $(WORK_DIR)/.config: $(CONFIGS_DIR)/$(CONFIG_FILENAME)
 	@mkdir -p $(dir $@)
 	cp -a $< $@
 
 $(WORK_DIR)/busybox: $(SRC_FILENAME) $(SOURCES) $(WORK_DIR)/.config
-	+$(MAKE) -C $(WORK_DIR) KBUILD_SRC=$(SRC_DIR) -f $(SRC_DIR)/Makefile
+	+$(MAKE) -C $(WORK_DIR) KBUILD_SRC=$(HERE)/$(SRC_DIR) -f $(HERE)/$(SRC_DIR)/Makefile
 
 $(DIST_DIR)/$(ARCH)-$(BIN_NAME): $(WORK_DIR)/busybox
 	@mkdir -p $(dir $@)
