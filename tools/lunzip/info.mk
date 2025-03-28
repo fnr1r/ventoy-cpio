@@ -1,7 +1,7 @@
 NAME := lunzip
 VERSION := 1.11
 
-BIN_NAME := $(NAME)cat
+BIN_NAME := $(NAME)
 
 SRC_EXTRACTED := $(NAME)-$(VERSION)
 SRC_FILENAME := $(SRC_EXTRACTED).tar.gz
