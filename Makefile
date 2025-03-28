@@ -7,18 +7,19 @@ DIST_DIR ?= dist
 .PHONY: all build clean
 all: build
 build: arch base
-clean:
+clean: clean/tools
 	-rm -r dist build
+clean/%:
+	+$(MAKE) -C $(call reverse,$(subst /, ,$@))
+
+tools:
+	+$(MAKE) -C $@
 
 .PHONY: arch tools
 arch: tools arch-ramdisks
 
 .PHONY: base
 base: $(DIST_DIR)/ventoy.cpio
-
-include $(SCRIPTS_DIR)/submake.mk
-
-$(call add_submake_hack,tools,tools,tools)
 
 $(DIST_DIR)/ventoy.cpio:
 	+$(MAKE) -f cpio.base.mk
