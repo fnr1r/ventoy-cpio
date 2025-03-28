@@ -60,10 +60,8 @@ ZSTD_URL := https://github.com/facebook/$(ZSTD_NAME)/releases/download/v$(ZSTD_V
 
 $(call download_and_extract_tar,$(ZSTD_URL),$(ZSTD_FILENAME),$(ZSTD_DIR),src/$(ZSTD_NAME))
 
-dist:
-	mkdir -p $@
-
-dist/%/$(BIN_NAME): build.sh | src src/lz4 src/lzo src/xz src/zlib src/zstd dist
+dist/%/$(BIN_NAME): build.sh | src src/lz4 src/lzo src/xz src/zlib src/zstd
+	@mkdir -p $(dir $@)
 	+bash build.sh $(patsubst dist/%/$(BIN_NAME),%,$@) $(MAKE)
 
 .PHONY: $(SUPPORTED_ARCHES)

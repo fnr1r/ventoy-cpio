@@ -14,6 +14,7 @@ clean:
 	-rm -r build dist
 
 dist/%/$(BIN_NAME): $(wildcard src/*)
+	@mkdir -p $(dir $@)
 	+$(MAKE) -C src ARCH=$(patsubst dist/%/$(BIN_NAME),%,$@)
 
 .PHONY: $(SUPPORTED_ARCHES)

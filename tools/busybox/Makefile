@@ -22,10 +22,8 @@ clean:
 
 $(call download_and_extract_tar,$(SRC_URL),$(SRC_FILENAME),$(SRC_DIR),src)
 
-dist:
-	mkdir -p $@
-
-dist/%: | src dist
+dist/%: | src
+	@mkdir -p $(dir $@)
 	+bash build.sh $(patsubst dist/%,%,$@) $(MAKE)
 
 .PHONY: $(SUPPORTED_ARCHES)
