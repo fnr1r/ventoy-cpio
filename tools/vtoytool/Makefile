@@ -1,18 +1,13 @@
 include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
+include info.mk
 
 SUPPORTED_ARCHES := $(ARCHES_ALL)
 
-include $(SCRIPTS_DIR)/shared_build.mk
+include $(SCRIPTS_DIR)/shared_main.mk
 
-BIN_NAME := vtoytool
-
-.PHONY: all build clean
-all: build
-build: $(SUPPORTED_TARGETS)
-clean:
-	-rm -r build dist
-
+src:
+	+$(MAKE) -f source.mk
 dist/%/$(BIN_NAME): $(wildcard src/*)
 	@mkdir -p $(dir $@)
 	+$(MAKE) -C src ARCH=$(patsubst dist/%/$(BIN_NAME),%,$@)

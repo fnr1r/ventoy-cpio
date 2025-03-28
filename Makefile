@@ -4,12 +4,16 @@ include $(SCRIPTS_DIR)/shared.mk
 BUILD_DIR ?= build
 DIST_DIR ?= dist
 
-.PHONY: all build clean
+.PHONY: all build clean clean-src clean-all download prepare
 all: build
 build: arch base
 clean: clean/tools
 	-rm -r dist build
-clean/%:
+clean-src: clean-src/tools
+clean-all: clean-all/tools
+download: download/tools
+prepare: prepare/tools
+clean/% clean-src/% clean-all/% download/% prepare/%:
 	+$(MAKE) -C $(call reverse,$(subst /, ,$@))
 
 tools:
