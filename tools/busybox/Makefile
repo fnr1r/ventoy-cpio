@@ -6,13 +6,23 @@ SUPPORTED_ARCHES := $(ARCHES_ALL)
 
 include $(SCRIPTS_DIR)/shared_main.mk
 
+.PHONY: src
 src:
 	+$(MAKE) -f source.mk
-dist/%: | src
-	@mkdir -p $(dir $@)
-	+bash build.sh $(patsubst dist/%,%,$@) $(MAKE)
+dist/%: src
+	+$(MAKE) -f build.mk TARGET=$(patsubst dist/%,%,$@)
 
-.PHONY: $(SUPPORTED_ARCHES)
-$(foreach arch,$(SUPPORTED_ARCHES), $(eval \
-	$(arch): $(foreach bin,$(BIN_NAMES), dist/$(arch)_$(bin) )	\
+# for autocompletion
+$(foreach a,$(SUPPORTED_ARCHES), $(foreach b,$(BIN_NAMES), \
+	$(eval dist/$a-$b dist/$a/$b:) \
+	$(eval $a-$b: dist/$a-$b) \
+	$(eval build: dist/$a-$b) \
+))
+
+$(foreach a,$(SUPPORTED_ARCHES), $(eval \
+	$a: $(foreach b,$(BIN_NAMES), $a-$b ) \
+))
+
+$(foreach b,$(BIN_NAMES), $(eval \
+	$b: $(foreach a,$(SUPPORTED_ARCHES), $a-$b )\
 ))

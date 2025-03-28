@@ -12,7 +12,7 @@ XZ_FLAGS=(-c -e -9)
 copy_with() {
     local arch="$1" suffix="$2"
     xz "${XZ_FLAGS[@]}" \
-        "$REPO_DIR/tools/busybox/dist/${arch}_busybox" \
+        "$REPO_DIR/tools/busybox/dist/${arch}-busybox" \
         > "busybox${suffix}.xz"
     cp -a \
         "$REPO_DIR/tools/vtchmod/dist/${arch}/vtchmod" \
@@ -24,24 +24,24 @@ copy_with() {
 
 prepare_files_arm64() {
     cp -aL \
-        "$REPO_DIR/tools/busybox/dist/aarch64_ash" \
+        "$REPO_DIR/tools/busybox/dist/aarch64-ash" \
         a64
     copy_with aarch64 aa64
 }
 
 prepare_files_mips64() {
     cp -aL \
-        "$REPO_DIR/tools/busybox/dist/x86_64_ash" \
+        "$REPO_DIR/tools/busybox/dist/mips64el-ash" \
         m64
     copy_with mips64el m64e
 }
 
 prepare_files_x86() {
     cp -aL \
-        "$REPO_DIR/tools/busybox/dist/x86_64_ash" \
+        "$REPO_DIR/tools/busybox/dist/x86_64-ash" \
         64h
     cp -aL \
-        "$REPO_DIR/tools/busybox/dist/i386_ash" \
+        "$REPO_DIR/tools/busybox/dist/i386-ash" \
         ash
     copy_with x86_64 64
     copy_with i386 32
