@@ -9,8 +9,8 @@ all: build
 build: arch base
 clean: clean/tools
 	-rm -r dist build
-clean-src: clean-src/tools
-clean-all: clean-all/tools
+clean-src: clean clean-src/tools
+clean-all: clean clean-all/tools
 download: download/tools
 prepare: prepare/tools
 clean/% clean-src/% clean-all/% download/% prepare/%:
