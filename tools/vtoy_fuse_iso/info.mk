@@ -11,4 +11,4 @@ FUSE_EXTRACTED := $(FUSE_NAME)-$(FUSE_VERSION)
 FUSE_FILENAME := $(FUSE_EXTRACTED).tar.gz
 FUSE_URL := https://github.com/libfuse/lib$(FUSE_NAME)/releases/download/$(FUSE_EXTRACTED)/$(FUSE_FILENAME)
 FUSE_DIR := src/libfuse
-#FUSE_TARGET := libfuse.a
+FUSE_TARGET := libfuse.a
