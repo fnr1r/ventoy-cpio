@@ -10,8 +10,8 @@ build: arch base
 clean:
 	-rm -r dist build
 
-.PHONY: arch tools tools-bin
-arch: tools tools-bin arch-ramdisks
+.PHONY: arch tools
+arch: tools arch-ramdisks
 
 .PHONY: base
 base: $(DIST_DIR)/ventoy.cpio
@@ -19,7 +19,6 @@ base: $(DIST_DIR)/ventoy.cpio
 include $(SCRIPTS_DIR)/submake.mk
 
 $(call add_submake_hack,tools,tools,tools)
-$(call add_submake_hack,tools-bin,tools_bin,tools-bin)
 
 $(DIST_DIR)/ventoy.cpio:
 	+$(MAKE) -f cpio.base.mk
