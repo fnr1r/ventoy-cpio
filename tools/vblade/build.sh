@@ -31,8 +31,6 @@ argparse() {
             STRIP_CMD=(strip)
             ;;
         mips64el)
-            echo "broken (for now) :("
-            exit 69
             CC="diet mips64el-linux-musl-gcc"
             CFLAGS+=" -D_BSD_SOURCE -D_GNU_SOURCE"
             STRIP_CMD=(mips64el-linux-musl-strip)

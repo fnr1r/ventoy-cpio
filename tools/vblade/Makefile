@@ -1,7 +1,7 @@
 include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared.mk
 
-SUPPORTED_ARCHES := $(ARCHES_WITHOUT_MIPS)
+SUPPORTED_ARCHES := $(ARCHES_ALL)
 
 include $(SCRIPTS_DIR)/shared_build.mk
 
