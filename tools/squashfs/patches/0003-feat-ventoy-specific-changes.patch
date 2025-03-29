@@ -1,0 +1,251 @@
+From a3912eccd76fa81d2a02b3af3b668c3b465cdb9b Mon Sep 17 00:00:00 2001
+From: fnrir
+Date: Sat, 29 Mar 2025 21:19:04 +0100
+Subject: [PATCH 3/3] feat: ventoy-specific changes
+
+---
+ squashfs-tools/unsquashfs.c | 173 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 171 insertions(+), 2 deletions(-)
+
+diff --git a/squashfs-tools/unsquashfs.c b/squashfs-tools/unsquashfs.c
+index 727f1d51..0ab14998 100644
+--- a/squashfs-tools/unsquashfs.c
++++ b/squashfs-tools/unsquashfs.c
+@@ -40,6 +40,33 @@
+ #include <limits.h>
+ #include <ctype.h>
+ 
++#ifdef _VTOY_DEF_UINTS
++#include <stdint.h>
++#endif
++
++static int verbose = 0;
++#define debug(fmt, ...) if(verbose) printf(fmt, ##__VA_ARGS__)
++
++#pragma pack(1)
++
++typedef struct fs_disk_region {
++    uint32_t sector;
++    uint32_t count;
++} fs_disk_region;
++
++typedef struct fs_disk_map {
++    char diskname[32];
++    uint64_t filesize;
++    
++    //fs_disk_region[N];
++} fs_disk_map;
++
++#pragma pack()
++
++int g_fs_region_num = 0;
++fs_disk_region *g_fs_region_list = NULL;
++fs_disk_map g_fs_disk_map;
++
+ struct cache *fragment_cache, *data_cache;
+ struct queue *to_reader, *to_inflate, *to_writer, *from_writer;
+ pthread_t *thread, *inflator_thread;
+@@ -625,6 +652,96 @@ long long lookup_entry(struct hash_table_entry *hash_table[], long long start)
+ 	return -1;
+ }
+ 
++int read_fs_sectors(int fd, uint32_t sector, uint32_t count, char *buf)
++{
++    int i;
++    uint32_t total = 0;
++    uint32_t left = 0;
++    uint32_t offset = 0;
++    uint32_t readcnt = 0;
++    fs_disk_region *region;
++
++    for (i = 0; i < g_fs_region_num && count > 0; i++)
++    {
++        region = g_fs_region_list + i;
++
++        if (sector >= total && sector < total + region->count)
++        {
++            offset = sector - total;
++            left = region->count - offset;
++            readcnt = (count <= left) ? count : left;
++            
++            lseek(fd, (uint64_t)(offset + region->sector) * 512ULL, SEEK_SET);
++            read(fd, buf, (uint64_t)readcnt * 512ULL);
++
++            buf += (uint64_t)readcnt * 512ULL;
++            count -= readcnt;
++        }
++        else
++        {
++            total += region->count;
++        }
++    }
++
++    return 0;
++}
++
++#if 1
++int read_fs_bytes(int fd, long long byte, int bytes, void *buff)
++{
++    uint32_t mod = 0;
++    uint32_t align = 0;
++    uint32_t sector = 0;
++    uint32_t number = 0;
++    uint32_t leftsize = 0;
++	uint64_t offset = byte;
++    char *buf = (char *)buff;
++    char secbuf[512];
++
++    if (offset >= g_fs_disk_map.filesize || offset + bytes > g_fs_disk_map.filesize)
++    {
++        return FALSE;
++    }
++
++    leftsize = bytes;
++    sector = offset / 512;
++
++    mod = offset % 512;
++    if (mod > 0)
++    {
++        align = 512 - mod;
++        read_fs_sectors(fd, sector, 1, secbuf);
++
++        if (leftsize > align)
++        {
++            memcpy(buf, secbuf + mod, align);
++            buf += align;
++            offset += align;
++            sector++;
++            leftsize -= align;
++        }
++        else
++        {
++            memcpy(buf, secbuf + mod, leftsize);
++            return TRUE;
++        }
++    }
++
++    number = leftsize / 512;
++    read_fs_sectors(fd, sector, number, buf);
++    buf += number * 512;
++
++    mod = leftsize % 512;
++    if (mod > 0)
++    {
++        read_fs_sectors(fd, sector + number, 1, secbuf);
++        memcpy(buf, secbuf, mod);
++    }
++
++	return TRUE;
++}
++
++#else
+ 
+ int read_fs_bytes(int fd, long long byte, int bytes, void *buff)
+ {
+@@ -657,7 +774,7 @@ int read_fs_bytes(int fd, long long byte, int bytes, void *buff)
+ 
+ 	return TRUE;
+ }
+-
++#endif
+ 
+ int read_block(int fd, long long start, long long *next, int expected,
+ 								void *block)
+@@ -2451,6 +2568,17 @@ void progressbar_info(char *fmt, ...)
+ 
+ 	pthread_mutex_unlock(&screen_mutex);
+ }
++static int get_max_digits(long long max)
++{
++    int digits = 0;
++    
++    while (max > 10) {
++        max /= 10;
++        digits++;
++    }
++
++    return digits;
++}
+ 
+ void progress_bar(long long current, long long max, int columns)
+ {
+@@ -2461,7 +2589,8 @@ void progress_bar(long long current, long long max, int columns)
+ 	if(max == 0)
+ 		return;
+ 
+-	max_digits = floor(log10(max)) + 1;
++	//max_digits = floor(log10(max)) + 1;
++	max_digits = get_max_digits(max) + 1;
+ 	used = max_digits * 2 + 11;
+ 	hashes = (current * (columns - used)) / max;
+ 	spaces = columns - used - hashes;
+@@ -2609,6 +2738,38 @@ int parse_number(char *start, int *res)
+ }
+ 
+ 
++int ventoy_parse_disk_map(void)
++{
++    int len = 0;
++
++    debug("ventoy_parse_disk_map\n");
++
++    len = (int)lseek(fd, 0, SEEK_END);
++    lseek(fd, 0, SEEK_SET);
++
++    if (len < sizeof(fs_disk_map) + sizeof(fs_disk_region))
++    {
++        return 1;
++    }
++
++    read(fd, &g_fs_disk_map, sizeof(fs_disk_map));
++
++    debug("diskname=<%s> filesize=<%llu> region_num=<%u>\n", 
++          g_fs_disk_map.diskname, g_fs_disk_map.filesize, g_fs_region_num);
++
++    g_fs_region_num = (len - sizeof(fs_disk_map)) / sizeof(fs_disk_region);
++    g_fs_region_list = malloc(g_fs_region_num * sizeof(fs_disk_region));
++    read(fd, g_fs_region_list, g_fs_region_num * sizeof(fs_disk_region));
++
++    close(fd);    
++    
++    fd = open(g_fs_disk_map.diskname, O_RDONLY);
++    debug("ventoy_parse_disk_map end fd=%d\n", fd);
++    
++    return 0;
++}
++
++
+ #define VERSION() \
+ 	printf("unsquashfs version 4.4 (2019/08/29)\n");\
+ 	printf("copyright (C) 2019 Phillip Lougher "\
+@@ -2649,6 +2810,10 @@ int main(int argc, char *argv[])
+ 			break;
+ 		if(strcmp(argv[i], "-UTC") == 0)
+ 			use_localtime = FALSE;
++        else if (strcmp(argv[i], "-t") == 0)
++            return 0;
++        else if (strcmp(argv[i], "-v") == 0)
++            verbose = 1;
+ 		else if(strcmp(argv[i], "-strict-errors") == 0 ||
+ 				strcmp(argv[i], "-st") == 0)
+ 			strict_errors = TRUE;
+@@ -2874,6 +3039,8 @@ options:
+ 		exit(1);
+ 	}
+ 
++    ventoy_parse_disk_map();
++
+ 	if(read_super(argv[i]) == FALSE)
+ 		exit(1);
+ 
+@@ -2985,5 +3152,7 @@ options:
+ 		printf("created %d fifos\n", fifo_count);
+ 	}
+ 
++    close(fd);    
++
+ 	return exit_code;
+ }
+-- 
+2.49.0
+

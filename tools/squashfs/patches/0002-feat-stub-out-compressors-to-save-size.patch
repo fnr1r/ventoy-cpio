@@ -1,0 +1,336 @@
+From 5874c3ab79e44f2b31a3fb6f9d51fbf1c1da4511 Mon Sep 17 00:00:00 2001
+From: fnrir
+Date: Sat, 29 Mar 2025 21:17:13 +0100
+Subject: [PATCH 2/3] feat: stub out compressors to save size
+
+---
+ squashfs-tools/lz4_wrapper.c  | 23 +---------
+ squashfs-tools/lzma_wrapper.c | 45 +------------------
+ squashfs-tools/lzo_wrapper.c  | 84 +++--------------------------------
+ squashfs-tools/zstd_wrapper.c | 77 +++++---------------------------
+ 4 files changed, 18 insertions(+), 211 deletions(-)
+
+diff --git a/squashfs-tools/lz4_wrapper.c b/squashfs-tools/lz4_wrapper.c
+index a93b499d..bc9c04d8 100644
+--- a/squashfs-tools/lz4_wrapper.c
++++ b/squashfs-tools/lz4_wrapper.c
+@@ -247,28 +247,7 @@ failed:
+ static int lz4_compress(void *strm, void *dest, void *src,  int size,
+ 	int block_size, int *error)
+ {
+-	int res;
+-
+-	if(hc)
+-		res = COMPRESS_HC(src, dest, size, block_size);
+-	else
+-		res = COMPRESS(src, dest, size, block_size);
+-
+-	if(res == 0) {
+-		/*
+-	 	 * Output buffer overflow.  Return out of buffer space
+-	 	 */
+-		return 0;
+-	} else if(res < 0) {
+-		/*
+-	 	 * All other errors return failure, with the compressor
+-	 	 * specific error code in *error
+-	 	 */
+-		*error = res;
+-		return -1;
+-	}
+-
+-	return res;
++	return 0;
+ }
+ 
+ 
+diff --git a/squashfs-tools/lzma_wrapper.c b/squashfs-tools/lzma_wrapper.c
+index 8d64e3df..1e767331 100644
+--- a/squashfs-tools/lzma_wrapper.c
++++ b/squashfs-tools/lzma_wrapper.c
+@@ -32,50 +32,7 @@
+ static int lzma_compress(void *strm, void *dest, void *src, int size, int block_size,
+ 		int *error)
+ {
+-	unsigned char *d = dest;
+-	size_t props_size = LZMA_PROPS_SIZE,
+-		outlen = block_size - LZMA_HEADER_SIZE;
+-	int res;
+-
+-	res = LzmaCompress(dest + LZMA_HEADER_SIZE, &outlen, src, size, dest,
+-		&props_size, 5, block_size, 3, 0, 2, 32, 1);
+-	
+-	if(res == SZ_ERROR_OUTPUT_EOF) {
+-		/*
+-		 * Output buffer overflow.  Return out of buffer space error
+-		 */
+-		return 0;
+-	}
+-
+-	if(res != SZ_OK) {
+-		/*
+-		 * All other errors return failure, with the compressor
+-		 * specific error code in *error
+-		 */
+-		*error = res;
+-		return -1;
+-	}
+-
+-	/*
+-	 * Fill in the 8 byte little endian uncompressed size field in the
+-	 * LZMA header.  8 bytes is excessively large for squashfs but
+-	 * this is the standard LZMA header and which is expected by the kernel
+-	 * code
+-	 */
+-	d[LZMA_PROPS_SIZE] = size & 255;
+-	d[LZMA_PROPS_SIZE + 1] = (size >> 8) & 255;
+-	d[LZMA_PROPS_SIZE + 2] = (size >> 16) & 255;
+-	d[LZMA_PROPS_SIZE + 3] = (size >> 24) & 255;
+-	d[LZMA_PROPS_SIZE + 4] = 0;
+-	d[LZMA_PROPS_SIZE + 5] = 0;
+-	d[LZMA_PROPS_SIZE + 6] = 0;
+-	d[LZMA_PROPS_SIZE + 7] = 0;
+-
+-	/*
+-	 * Success, return the compressed size.  Outlen returned by the LZMA
+-	 * compressor does not include the LZMA header space
+-	 */
+-	return outlen + LZMA_HEADER_SIZE;
++	return 0;
+ }
+ 
+ 
+diff --git a/squashfs-tools/lzo_wrapper.c b/squashfs-tools/lzo_wrapper.c
+index f367fadb..4d7c3db5 100644
+--- a/squashfs-tools/lzo_wrapper.c
++++ b/squashfs-tools/lzo_wrapper.c
+@@ -65,53 +65,9 @@ static int user_comp_level = -1;
+  */
+ static int lzo_options(char *argv[], int argc)
+ {
+-	int i;
+-
+-	if(strcmp(argv[0], "-Xalgorithm") == 0) {
+-		if(argc < 2) {
+-			fprintf(stderr, "lzo: -Xalgorithm missing algorithm\n");
+-			fprintf(stderr, "lzo: -Xalgorithm <algorithm>\n");
+-			goto failed2;
+-		}
+-
+-		for(i = 0; lzo[i].name; i++) {
+-			if(strcmp(argv[1], lzo[i].name) == 0) {
+-				algorithm = i;
+-				return 1;
+-			}
+-		}
+-
+-		fprintf(stderr, "lzo: -Xalgorithm unrecognised algorithm\n");
+-		goto failed2;
+-	} else if(strcmp(argv[0], "-Xcompression-level") == 0) {
+-		if(argc < 2) {
+-			fprintf(stderr, "lzo: -Xcompression-level missing "
+-				"compression level\n");
+-			fprintf(stderr, "lzo: -Xcompression-level it "
+-				"should be 1 >= n <= 9\n");
+-			goto failed;
+-		}
+-
+-		user_comp_level = atoi(argv[1]);
+-		if(user_comp_level < 1 || user_comp_level > 9) {
+-			fprintf(stderr, "lzo: -Xcompression-level invalid, it "
+-				"should be 1 >= n <= 9\n");
+-			goto failed;
+-		}
+-
+-		return 1;
+-	}
+-
+-	return -1;
+-
+-failed:
+-	return -2;
+-
+-failed2:
+-	fprintf(stderr, "lzo: compression algorithm should be one of:\n");
+-	for(i = 0; lzo[i].name; i++)
+-		fprintf(stderr, "\t%s\n", lzo[i].name);
+-	return -2;
++    (void)argv;
++    (void)argc;
++	return 1;
+ }
+ 
+ 
+@@ -340,38 +296,8 @@ failed:
+ static int lzo_compress(void *strm, void *dest, void *src,  int size,
+ 	int block_size, int *error)
+ {
+-	int res;
+-	lzo_uint compsize, orig_size = size;
+-	struct lzo_stream *stream = strm;
+-
+-	res = lzo[algorithm].compress(src, size, stream->buffer, &compsize,
+-							stream->workspace);
+-	if(res != LZO_E_OK)
+-		goto failed;	
+-
+-	/* Successful compression, however, we need to check that
+-	 * the compressed size is not larger than the available
+-	 * buffer space.  Normally in other compressor APIs they take
+-	 * a destination buffer size, and overflows return an error.
+-	 * With LZO it lacks a destination size and so we must output
+-	 * to a temporary buffer large enough to accomodate any
+-	 * result, and explictly check here for overflow
+-	 */
+-	if(compsize > block_size)
+-		return 0;
+-
+-	res = lzo1x_optimize(stream->buffer, compsize, src, &orig_size, NULL);
+-
+-	if (res != LZO_E_OK || orig_size != size)
+-		goto failed;
+-
+-	memcpy(dest, stream->buffer, compsize);
+-	return compsize;
+-
+-failed:
+-	/* fail, compressor specific error code returned in error */
+-	*error = res;
+-	return -1;
++    
++	return 0;
+ }
+ 
+ 
+diff --git a/squashfs-tools/zstd_wrapper.c b/squashfs-tools/zstd_wrapper.c
+index dcab75a8..f37b7f4b 100644
+--- a/squashfs-tools/zstd_wrapper.c
++++ b/squashfs-tools/zstd_wrapper.c
+@@ -46,29 +46,7 @@ static int compression_level = ZSTD_DEFAULT_COMPRESSION_LEVEL;
+  */
+ static int zstd_options(char *argv[], int argc)
+ {
+-	if (strcmp(argv[0], "-Xcompression-level") == 0) {
+-		if (argc < 2) {
+-			fprintf(stderr, "zstd: -Xcompression-level missing "
+-				"compression level\n");
+-			fprintf(stderr, "zstd: -Xcompression-level it should "
+-				"be 1 <= n <= %d\n", ZSTD_maxCLevel());
+-			goto failed;
+-		}
+-
+-		compression_level = atoi(argv[1]);
+-		if (compression_level < 1 ||
+-		    compression_level > ZSTD_maxCLevel()) {
+-			fprintf(stderr, "zstd: -Xcompression-level invalid, it "
+-				"should be 1 <= n <= %d\n", ZSTD_maxCLevel());
+-			goto failed;
+-		}
+-
+-		return 1;
+-	}
+-
+-	return -1;
+-failed:
+-	return -2;
++	return 1;
+ }
+ 
+ /*
+@@ -83,18 +61,7 @@ failed:
+  */
+ static void *zstd_dump_options(int block_size, int *size)
+ {
+-	static struct zstd_comp_opts comp_opts;
+-
+-	/* don't return anything if the options are all default */
+-	if (compression_level == ZSTD_DEFAULT_COMPRESSION_LEVEL)
+-		return NULL;
+-
+-	comp_opts.compression_level = compression_level;
+-
+-	SQUASHFS_INSWAP_COMP_OPTS(&comp_opts);
+-
+-	*size = sizeof(comp_opts);
+-	return &comp_opts;
++	return NULL;
+ }
+ 
+ /*
+@@ -132,8 +99,7 @@ static int zstd_extract_options(int block_size, void *buffer, int size)
+ 
+ 	SQUASHFS_INSWAP_COMP_OPTS(comp_opts);
+ 
+-	if (comp_opts->compression_level < 1 ||
+-	    comp_opts->compression_level > ZSTD_maxCLevel()) {
++	if (comp_opts->compression_level < 1) {
+ 		fprintf(stderr, "zstd: bad compression level in compression "
+ 			"options structure\n");
+ 		goto failed;
+@@ -160,8 +126,7 @@ static void zstd_display_options(void *buffer, int size)
+ 
+ 	SQUASHFS_INSWAP_COMP_OPTS(comp_opts);
+ 
+-	if (comp_opts->compression_level < 1 ||
+-	    comp_opts->compression_level > ZSTD_maxCLevel()) {
++	if (comp_opts->compression_level < 1) {
+ 		fprintf(stderr, "zstd: bad compression level in compression "
+ 			"options structure\n");
+ 		goto failed;
+@@ -184,37 +149,19 @@ failed:
+  */
+ static int zstd_init(void **strm, int block_size, int datablock)
+ {
+-	ZSTD_CCtx *cctx = ZSTD_createCCtx();
+-
+-	if (!cctx) {
+-		fprintf(stderr, "zstd: failed to allocate compression "
+-			"context!\n");
+-		return -1;
+-	}
+-
+-	*strm = cctx;
+ 	return 0;
+ }
+ 
+ static int zstd_compress(void *strm, void *dest, void *src, int size,
+ 			 int block_size, int *error)
+ {
+-	const size_t res = ZSTD_compressCCtx((ZSTD_CCtx*)strm, dest, block_size,
+-					     src, size, compression_level);
+-
+-	if (ZSTD_isError(res)) {
+-		/* FIXME:
+-		 * zstd does not expose stable error codes. The error enum may
+-		 * change between versions. Until upstream zstd stablizes the
+-		 * error codes, we have no way of knowing why the error occurs.
+-		 * zstd shouldn't fail to compress any input unless there isn't
+-		 * enough output space. We assume that is the cause and return
+-		 * the special error code for not enough output space.
+-		 */
+-		return 0;
+-	}
+-
+-	return (int)res;
++    (void)strm;
++    (void)dest;
++    (void)src;
++    (void)size;
++    (void)block_size;
++    (void)error;
++	return 0;
+ }
+ 
+ static int zstd_uncompress(void *dest, void *src, int size, int outsize,
+@@ -235,8 +182,6 @@ static int zstd_uncompress(void *dest, void *src, int size, int outsize,
+ static void zstd_usage(void)
+ {
+ 	fprintf(stderr, "\t  -Xcompression-level <compression-level>\n");
+-	fprintf(stderr, "\t\t<compression-level> should be 1 .. %d (default "
+-		"%d)\n", ZSTD_maxCLevel(), ZSTD_DEFAULT_COMPRESSION_LEVEL);
+ }
+ 
+ struct compressor zstd_comp_ops = {
+-- 
+2.49.0
+

@@ -27,11 +27,13 @@ CC := musl-$(CC)
 CONFIGURE_OPTS := --host=x86_64-linux
 else ifeq ($(ARCH),i386)
 CC := $(CC) -m32
+CFLAGS := $(CFLAGS) -D_VTOY_DEF_UINTS
 DIET := diet32
 CONFIGURE_OPTS := --host=i386-linux
 else ifeq ($(ARCH),aarch64)
 CROSS_COMPILE := aarch64-linux-
 CC := $(CROSS_COMPILE)$(CC)
+CFLAGS := $(CFLAGS) -D_VTOY_DEF_UINTS
 STRIP := $(CROSS_COMPILE)$(STRIP)
 CONFIGURE_OPTS := --host=arm-linux
 else ifeq ($(ARCH),mips64el)
