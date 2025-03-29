@@ -1,6 +1,1 @@
-*.tar.gz
-*.tar.xz
-*.tar.zst
-build
-dist
-src
+/src
