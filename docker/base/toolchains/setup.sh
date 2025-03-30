@@ -3,6 +3,8 @@ set -euo pipefail
 
 HERE="$(dirname "$(readlink -f -- "$0")")"
 
+TMP_DOWNLOAD="/tmp/toolchains_download"
+
 TOOLCHAINS=(
     "https://github.com/ventoy/vtoytoolchain/releases/download/1.0/aarch64--uclibc--stable-2020.08-1.tar.bz2#aarch64--uclibc--stable-2020.08-1#aarch64--uclibc--stable-2020.08-1"
     #"https://github.com/ventoy/vtoytoolchain/releases/download/1.0/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu.tar.xz#gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu#gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu"
@@ -20,16 +22,23 @@ download_and_extract() {
 
     if ! [[ -f "$url_file" ]]; then
         echo "  downloading"
-        wget -q "$url"
+        wget -q "$url" -O "$url_file"
     else
         echo "  skipping download"
+    fi
+
+    if ! [[ -f "$url_file.skip_check" ]]; then
+        printf "  verifying: "
+        sha256sum -c "$url_file.sha256"
+    else
+        echo "  skipping verification"
     fi
 
     tmpd="$(mktemp -d)"
     pushd "$tmpd" > /dev/null
     echo "  extracting"
-    tar -xf "$HERE/$url_file"
-    mv "$src" "/opt/$dest"
+    tar xf "$TMP_DOWNLOAD/$url_file"
+    mv "$src" "$dest"
     echo "  done"
     popd > /dev/null
     rm -r "$tmpd"
@@ -44,13 +53,17 @@ download_and_extract() {
 
 main() {
     cd "$HERE"
+    mkdir -p "$TMP_DOWNLOAD"
+    cp -a --reflink=auto . "$TMP_DOWNLOAD"
+    cd "$TMP_DOWNLOAD"
     for i in "${TOOLCHAINS[@]}"; do
         IFS='#' read -r url src dest <<< "$i"
-        download_and_extract "$url" "$src" "$dest"
+        download_and_extract "$url" "$src" "/opt/$dest"
     done
     #for i in /opt/*; do
     #    link_bins "$i"
     #done
+    rm -r "$TMP_DOWNLOAD"
     eval "exit 0"
 }
 

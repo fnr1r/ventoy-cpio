@@ -4,6 +4,9 @@ set -euo pipefail
 HERE="$(dirname "$(readlink -f -- "$0")")"
 JOBS="$(nproc)"
 
+TMP_BUILD="/tmp/dietlibc_build"
+TMP_DOWNLOAD="/tmp/dietlibc_download"
+
 NAME="dietlibc"
 VERSION="0.34"
 
@@ -23,15 +26,14 @@ download_and_extract() {
 
     if ! [[ -f "$url_file" ]]; then
         echo "  downloading"
-        wget -q "$url"
+        wget -q "$url" -O "$url_file"
     else
         echo "  skipping download"
     fi
 
-    if ! [[ -f "$url_file.checked" ]]; then
+    if ! [[ -f "$url_file.skip_check" ]]; then
         printf "  verifying: "
         sha256sum -c "$url_file.sha256"
-        #touch "$url_file.checked"
     else
         echo "  skipping verification"
     fi
@@ -39,7 +41,7 @@ download_and_extract() {
     tmpd="$(mktemp -d)"
     pushd "$tmpd" > /dev/null
     echo "  extracting"
-    tar -xf "$HERE/$url_file"
+    tar xf "$TMP_DOWNLOAD/$url_file"
     mv "$src" "$dest"
     echo "  done"
     popd > /dev/null
@@ -79,13 +81,15 @@ build_i386() {
 main() {
     local build_type="${1:-default}"
     cd "$HERE"
-    dest="/tmp/dietlibc_build"
-    download_and_extract "$SRC_URL" "$SRC_DIR" "$dest"
-    pushd "$dest" > /dev/null
+    mkdir -p "$TMP_DOWNLOAD"
+    cp -a --reflink=auto . "$TMP_DOWNLOAD"
+    cd "$TMP_DOWNLOAD"
+    download_and_extract "$SRC_URL" "$SRC_DIR" "$TMP_BUILD"
+    pushd "$TMP_BUILD" > /dev/null
     patch -p 1 -i "$HERE/newer-linux-headers.diff"
     "build_$build_type"
     popd > /dev/null
-    rm -r "$dest"
+    rm -r "$TMP_BUILD" "$TMP_DOWNLOAD"
     eval "exit 0"
 }
 
