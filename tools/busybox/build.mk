@@ -15,7 +15,12 @@ CFLAGS := -Os
 DIET := diet
 
 ifeq ($(ARCH),x86_64)
+ifeq ($(BIN_NAME),ash)
+CC := x86_64-linux-uclibc-$(CC)
+CONFIG_ASH := 04-ash-internal-glob.config
+else
 CC := musl-$(CC)
+endif
 else ifeq ($(ARCH),i386)
 CC := musl-i386-$(CC) -m32 -Wl,-melf_i386
 DIET := diet32
