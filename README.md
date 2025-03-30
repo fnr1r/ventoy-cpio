@@ -67,12 +67,41 @@ Size ratio (mips64):
 
 TODO: add this
 
-## Building
+## Usage
+
+### Building
 
 ```sh
 docker compose build
+```
+
+```sh
 docker compose up
 ```
+
+Hint:
+
+If you don't want to redownload archives every time you rebuild the container,
+go to `docker/base/{dietlibc,musl,toolchains}`, look though the setup script
+and manually `wget` the file.
+
+You can also run this to enter the container:
+
+```sh
+docker run -it --rm \
+  -v ".:/build" \
+  ventoy-cpio-builder:latest \
+  bash
+```
+
+### Setup
+
+Once you have `ventoy*.cpio` files:
+
+1. Mount the second partition on your Ventoy usb
+1. !!! BACK UP THE ORIGINAL `ventoy*.cpio` FILES !!!
+1. Copy the cpio you want to try out. (hint: if you don't know which one it is,
+  then it's probably `ventoy_x86.cpio`)
 
 ## Mini TODO
 
