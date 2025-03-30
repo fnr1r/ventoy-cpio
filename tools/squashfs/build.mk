@@ -26,8 +26,7 @@ ifeq ($(ARCH),x86_64)
 CC := musl-$(CC)
 CONFIGURE_OPTS := --host=x86_64-linux
 else ifeq ($(ARCH),i386)
-CC := $(CC) -m32
-CFLAGS := $(CFLAGS) -D_VTOY_DEF_UINTS
+CC := musl-i386-$(CC) -m32 -Wl,-melf_i386
 DIET := diet32
 CONFIGURE_OPTS := --host=i386-linux
 else ifeq ($(ARCH),aarch64)
