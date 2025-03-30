@@ -17,8 +17,12 @@ DIET := diet
 ifeq ($(ARCH),x86_64)
 CC := musl-$(CC)
 else ifeq ($(ARCH),i386)
-CC := $(CC) -m32
+CC := musl-i386-$(CC) -m32 -Wl,-melf_i386
 DIET := diet32
+# need to enable lfs due to BUG_off_t_size_is_misdetected
+CONFIG_ASH := 04-ash-lfs.config
+CONFIG_HEXDUMP := 04-hexdump-lfs.config
+CONFIG_XZCAT := 04-xzcat-lfs.config
 else ifeq ($(ARCH),aarch64)
 CROSS_COMPILE := aarch64-linux-
 CC := $(CROSS_COMPILE)$(CC)
