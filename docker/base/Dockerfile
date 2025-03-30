@@ -1,6 +1,6 @@
 FROM alpine:latest AS toolchains
 RUN --mount=type=cache,target=/var/cache/apk \
-    apk add bash curl wget xz
+    apk add bash curl patchelf wget xz
 
 RUN --mount=type=bind,source=toolchains,target=/tmp/toolchains \
     bash /tmp/toolchains/setup.sh
@@ -115,6 +115,9 @@ RUN --mount=type=cache,target=/var/cache/apt/archives \
 
 COPY --from=toolchains /opt/aarch64--uclibc--stable-2020.08-1 /opt/aarch64--uclibc--stable-2020.08-1
 COPY --from=toolchains /opt/mips64el-linux-gnu-musl-gcc7.3.0 /opt/mips64el-linux-gnu-musl-gcc7.3.0
+COPY --from=toolchains /opt/mini-native-x86_64 /opt/mini-native-x86_64
+
+RUN ln -s /opt/mini-native-x86_64/xbin/gcc /usr/local/bin/x86_64-linux-uclibc-gcc
 
 ENV AARCH64_TOOLCHAIN="/opt/aarch64--uclibc--stable-2020.08-1"
 ENV MIPS64EL_TOOLCHAIN="/opt/mips64el-linux-gnu-musl-gcc7.3.0"
