@@ -58,6 +58,10 @@ RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/arch
 
 RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
     --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
+    apt-get install -y wget
+
+RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
+    --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
     --mount=type=bind,source=dietlibc,target=/tmp/dietlibc \
     bash /tmp/dietlibc/setup.sh i386
 
@@ -105,6 +109,10 @@ RUN --mount=type=cache,target=/var/cache/apt/archives \
 RUN for i in asm-generic asm linux mtd; do \
         ln -s ../$i /usr/include/x86_64-linux-musl/$i; \
     done
+
+RUN --mount=type=cache,target=/var/cache/apt/archives \
+    --mount=type=cache,target=/var/lib/apt/lists \
+    apt-get install -y patch
 
 # conveniences
 RUN --mount=type=cache,target=/var/cache/apt/archives \
