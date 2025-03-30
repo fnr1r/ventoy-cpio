@@ -29,12 +29,10 @@ RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archiv
     apt-get install -y patch
 
 COPY --from=toolchains /opt/aarch64--uclibc--stable-2020.08-1 /opt/aarch64--uclibc--stable-2020.08-1
-COPY --from=toolchains /opt/mips64el-linux-gnu-musl-gcc7.3.0 /opt/mips64el-linux-gnu-musl-gcc7.3.0
 
 ENV AARCH64_TOOLCHAIN="/opt/aarch64--uclibc--stable-2020.08-1"
-ENV MIPS64EL_TOOLCHAIN="/opt/mips64el-linux-gnu-musl-gcc7.3.0"
 
-ENV PATH="${PATH}:${AARCH64_TOOLCHAIN}/bin:${MIPS64EL_TOOLCHAIN}/bin"
+ENV PATH="${PATH}:${AARCH64_TOOLCHAIN}/bin"
 
 RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archives \
     --mount=type=cache,id=/var/lib/apt/lists-2,target=/var/lib/apt/lists \

@@ -56,12 +56,12 @@ build_default() {
     # shellcheck disable=SC2034
     local makeopts_x86_64=(ARCH=x86_64 CC=gcc)
     # shellcheck disable=SC2034
-    local makeopts_i386=(ARCH=i386 EXTRACFLAGS="-m32")
+    #local makeopts_i386=(ARCH=i386 EXTRACFLAGS="-m32")
     # shellcheck disable=SC2034
     local makeopts_aarch64=(ARCH=aarch64 CROSS=aarch64-linux-)
     # shellcheck disable=SC2034
-    local makeopts_mips64el=(ARCH=mips64 CROSS=mips64el-linux-musl-)
-    for arch in x86_64 i386 aarch64 mips64el; do
+    #local makeopts_mips64el=(ARCH=mips64 CROSS=mips64el-linux-musl-)
+    for arch in x86_64 aarch64; do
         # shellcheck disable=SC1087
         eval "local opts=(\"\${makeopts_$arch[@]}\")"
         for target in all install; do
