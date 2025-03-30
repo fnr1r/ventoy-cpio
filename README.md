@@ -76,7 +76,7 @@ docker compose up
 
 ## Mini TODO
 
-- Build with an older version of Linux headers due for compatibility
+- Build with an older version of Linux headers for compatibility
 
 ## Notes
 
