@@ -51,6 +51,20 @@ RUN --mount=type=bind,source=dietlibc,target=/tmp/dietlibc \
 
 
 
+FROM --platform=linux/386 debian:12-slim AS musl-i386
+ENV DEBIAN_FRONTEND=noninteractive
+RUN --mount=type=cache,id=/var/lib/apt/lists-musl-i386,target=/var/lib/apt/lists \
+    apt-get update
+
+RUN --mount=type=cache,id=/var/cache/apt/archives-musl-i386,target=/var/cache/apt/archives \
+    --mount=type=cache,id=/var/lib/apt/lists-musl-i386,target=/var/lib/apt/lists \
+    apt-get install -y gcc make wget
+
+RUN --mount=type=bind,source=musl,target=/tmp/musl \
+    bash /tmp/musl/setup.sh i386
+
+
+
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN --mount=type=cache,target=/var/lib/apt/lists \
@@ -115,6 +129,16 @@ ENV DIETLIBC="/opt/diet"
 RUN ln -s /opt/diet/bin/diet /usr/local/bin/diet
 RUN ln -s /opt/diet/bin/diet /usr/local/bin/diet64
 RUN ln -s /opt/diet32/bin/diet /usr/local/bin/diet32
+
+COPY --from=musl-i386 /opt/musl-i386 /opt/musl-i386
+
+# again, this is required for some programs to compile with musl-gcc
+RUN for i in asm-generic asm linux mtd; do \
+        ln -s /usr/include/$i /opt/musl-i386/include/$i; \
+    done
+
+RUN ln -s /usr/include/linux /opt/musl-i386/include/linux
+RUN ln -s /opt/musl-i386/bin/musl-gcc /usr/local/bin/musl-i386-gcc
 
 RUN echo '\n\
 # SHELL EXTENSIONS IN /etc/bashrc.d\n\
