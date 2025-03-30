@@ -18,15 +18,11 @@ RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archiv
 
 RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archives \
     --mount=type=cache,id=/var/lib/apt/lists-2,target=/var/lib/apt/lists \
-    apt-get install -y make
+    apt-get install -y make patch
 
 RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archives \
     --mount=type=cache,id=/var/lib/apt/lists-2,target=/var/lib/apt/lists \
     apt-get install -y gcc gcc-multilib
-
-RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archives \
-    --mount=type=cache,id=/var/lib/apt/lists-2,target=/var/lib/apt/lists \
-    apt-get install -y patch
 
 COPY --from=toolchains /opt/aarch64--uclibc--stable-2020.08-1 /opt/aarch64--uclibc--stable-2020.08-1
 
@@ -41,26 +37,16 @@ RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archiv
 
 
 
-FROM --platform=linux/386 ubuntu:18.04 AS diet32
+FROM --platform=linux/386 debian:12-slim AS diet32
 ENV DEBIAN_FRONTEND=noninteractive
-RUN --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
+RUN --mount=type=cache,id=/var/lib/apt/lists-diet32,target=/var/lib/apt/lists \
     apt-get update
 
-RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
-    --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
-    apt-get install -y gcc make xz-utils
+RUN --mount=type=cache,id=/var/cache/apt/archives-diet32,target=/var/cache/apt/archives \
+    --mount=type=cache,id=/var/lib/apt/lists-diet32,target=/var/lib/apt/lists \
+    apt-get install -y gcc make patch wget xz-utils
 
-RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
-    --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
-    apt-get install -y patch
-
-RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
-    --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
-    apt-get install -y wget
-
-RUN --mount=type=cache,id=/var/cache/apt/archives-386,target=/var/cache/apt/archives \
-    --mount=type=cache,id=/var/lib/apt/lists-386,target=/var/lib/apt/lists \
-    --mount=type=bind,source=dietlibc,target=/tmp/dietlibc \
+RUN --mount=type=bind,source=dietlibc,target=/tmp/dietlibc \
     bash /tmp/dietlibc/setup.sh i386
 
 
@@ -81,11 +67,11 @@ RUN usermod -aG sudo ubuntu
 
 RUN --mount=type=cache,target=/var/cache/apt/archives \
     --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y bzip2 curl cpio wget xz-utils
+    apt-get install -y bzip2 curl cpio wget xz-utils zstd
 
 RUN --mount=type=cache,target=/var/cache/apt/archives \
     --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y make
+    apt-get install -y make patch
 
 RUN --mount=type=cache,target=/var/cache/apt/archives \
     --mount=type=cache,target=/var/lib/apt/lists \
@@ -101,16 +87,12 @@ RUN --mount=type=cache,target=/var/cache/apt/archives \
 
 RUN --mount=type=cache,target=/var/cache/apt/archives \
     --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y upx zstd
+    apt-get install -y upx
 
 # this is required for some programs to compile with musl-gcc
 RUN for i in asm-generic asm linux mtd; do \
         ln -s ../$i /usr/include/x86_64-linux-musl/$i; \
     done
-
-RUN --mount=type=cache,target=/var/cache/apt/archives \
-    --mount=type=cache,target=/var/lib/apt/lists \
-    apt-get install -y patch
 
 # conveniences
 RUN --mount=type=cache,target=/var/cache/apt/archives \
