@@ -39,11 +39,11 @@ RUN --mount=type=cache,id=/var/cache/apt/archives-2,target=/var/cache/apt/archiv
 
 FROM --platform=linux/386 debian:12-slim AS diet32
 ENV DEBIAN_FRONTEND=noninteractive
-RUN --mount=type=cache,id=/var/lib/apt/lists-diet32,target=/var/lib/apt/lists \
+RUN --mount=type=cache,id=/var/lib/apt-diet32,target=/var/lib/apt \
     apt-get update
 
 RUN --mount=type=cache,id=/var/cache/apt/archives-diet32,target=/var/cache/apt/archives \
-    --mount=type=cache,id=/var/lib/apt/lists-diet32,target=/var/lib/apt/lists \
+    --mount=type=cache,id=/var/lib/apt-diet32,target=/var/lib/apt \
     apt-get install -y gcc make patch wget xz-utils
 
 RUN --mount=type=bind,source=dietlibc,target=/tmp/dietlibc \
