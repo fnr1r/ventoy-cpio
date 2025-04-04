@@ -1,3 +1,8 @@
+ifndef SCRIPTS_DIR
+$(error SCRIPTS_DIR not set)
+endif
+include $(SCRIPTS_DIR)/shared.mk
+
 # Download a file and check its hash
 #
 # Defines a target named after the file
@@ -37,7 +42,7 @@ clean/$3:
 		rm -r $2; \
 	fi
 	-rm -r $3
-clean $(foreach d,$4,clean-$d): clean/$3
+clean-src $(foreach d,$4,clean/$d): clean/$3
 )
 endef
 
@@ -70,9 +75,15 @@ download: $($1_FILENAME)
 )
 endef
 
-.PHONY: all prepare clean clean-all download
+.PHONY: all clean clean-all download prepare
 all: prepare
-prepare:
 clean:
-clean-all: clean
+clean-src:
+clean-all:
 download:
+prepare:
+
+clean/% clean-src/% clean-all/% download/% prepare/%:
+	$(call slash_passtrough,$@,-f source.mk)
+
+#+$(MAKE) -f source.mk -C $(call reverse,$(subst /, ,$@))

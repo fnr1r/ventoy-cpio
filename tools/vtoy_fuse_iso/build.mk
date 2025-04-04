@@ -5,8 +5,6 @@ include info.mk
 
 PREFIX_DIR := $(WORK_DIR)/prefix
 
-ARCH := $(TARGET)
-
 CC := gcc
 CFLAGS := -Os
 DIET := diet

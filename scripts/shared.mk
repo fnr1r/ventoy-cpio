@@ -1,10 +1,12 @@
-ARCHES_X86 := i386 x86_64
-ARCHES_ARM := aarch64
-ARCHES_MIPS := mips64el
-ARCHES_ALL := $(ARCHES_X86) $(ARCHES_ARM) $(ARCHES_MIPS)
+BIN_ARCHES_X86 := x86_64 i386
+BIN_ARCHES_ARM := aarch64
+BIN_ARCHES_MIPS := mips64el
+BIN_ARCHES_ALL := $(BIN_ARCHES_X86) $(BIN_ARCHES_ARM) $(BIN_ARCHES_MIPS)
 
-ARCHES_WITHOUT_I386 := x86_64 $(ARCHES_ARM) $(ARCHES_MIPS)
-ARCHES_WITHOUT_MIPS := $(ARCHES_X86) $(ARCHES_ARM)
+BIN_ARCHES_WITHOUT_I386 := x86_64 $(BIN_ARCHES_ARM) $(BIN_ARCHES_MIPS)
+BIN_ARCHES_WITHOUT_MIPS := $(BIN_ARCHES_X86) $(BIN_ARCHES_ARM)
+
+RD_ARCHES_ALL := x86 arm64 mips64
 
 CURL_FLAGS ?= -L -s
 XZ_FLAGS ?= -e -9
@@ -19,12 +21,17 @@ CP_DIR := cp -ar --reflink=auto
 reverse = $(if $(wordlist 2,2,$(1)),$(call reverse,$(wordlist 2,$(words $(1)),$(1))) $(firstword $(1)),$(1))
 uppercase = $(shell echo "$1" | tr '[:lower:]' '[:upper:]')
 
+slash_passtrough_target = $(firstword $(subst /, ,$1))
+slash_passtrough_path = $(shell echo "$1" | sed -E 's|[^\/]+\/(.+)$$|\1|')
+slash_passtrough = +$(MAKE) -C $(call slash_passtrough_path,$1) $2 $(call slash_passtrough_target,$1)
+
 # might be useful
 RANDOM_STRING = $(shell hexdump -v -n 16 -e '4 /4  "%08X" 1 "\n"' /dev/urandom)
 
 # default to building for all targets
 ifndef TARGETS
+ifndef TARGET
 TARGETS := $(ARCHES_ALL)
-endif
-
 export TARGETS
+endif
+endif
