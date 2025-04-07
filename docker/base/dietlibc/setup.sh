@@ -8,7 +8,7 @@ TMP_BUILD="/tmp/dietlibc_build"
 TMP_DOWNLOAD="/tmp/dietlibc_download"
 
 NAME="dietlibc"
-VERSION="0.34"
+VERSION="0.35"
 
 SRC_DIR="$NAME-$VERSION"
 SRC_FILENAME="$SRC_DIR.tar.xz"
@@ -72,7 +72,7 @@ build_default() {
 }
 
 build_i386() {
-    local makeopts_i386=(prefix=/opt/diet32 MYARCH=i386)
+    local makeopts_i386=(prefix=/opt/diet32 MYARCH=i386 CFLAGS="-pipe -D_REENTRANT -ffreestanding")
     for target in all install; do
         xmake "${makeopts_i386[@]}" "$target"
     done
@@ -87,6 +87,9 @@ main() {
     download_and_extract "$SRC_URL" "$SRC_DIR" "$TMP_BUILD"
     pushd "$TMP_BUILD" > /dev/null
     patch -p 1 -i "$HERE/newer-linux-headers.diff"
+    pushd i386 > /dev/null
+    patch -i "$HERE/i386-add_missing_syscall.patch"
+    popd > /dev/null
     "build_$build_type"
     popd > /dev/null
     rm -r "$TMP_BUILD" "$TMP_DOWNLOAD"
