@@ -4,7 +4,7 @@ include info.mk
 
 SUPPORTED_ARCHES := $(ARCHES_WITHOUT_I386)
 
-include $(SCRIPTS_DIR)/shared_main.mk
+include $(SCRIPTS_DIR)/shared_main_tools.mk
 
 .PHONY: src
 src:
