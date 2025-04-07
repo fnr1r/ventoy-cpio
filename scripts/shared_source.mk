@@ -42,7 +42,7 @@ clean-src/$3:
 		rm -r $2; \
 	fi
 	-rm -r $3
-clean-src $(foreach d,$4,clean/$d): clean-src/$3
+clean-src $(foreach d,$4,clean-src/$d): clean-src/$3
 )
 endef
 
