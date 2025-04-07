@@ -37,7 +37,7 @@ clean/$3:
 		rm -r $2; \
 	fi
 	-rm -r $3
-clean $(foreach d,$4,clean-$d): clean/$3
+clean $(foreach d,$4,clean/$d): clean/$3
 )
 endef
 
