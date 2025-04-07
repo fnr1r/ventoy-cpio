@@ -12,7 +12,7 @@ clean-all: $(foreach t,$(TOOLS),clean-all/$t)
 download: $(foreach t,$(TOOLS),download/$t)
 prepare: $(foreach t,$(TOOLS),prepare/$t)
 clean/% clean-src/% clean-all/% download/% prepare/%:
-	+$(MAKE) -C $(call reverse,$(subst /, ,$@))
+	$(call slash_passtrough,$@)
 
 .PHONY: $(TOOLS)
 $(TOOLS):

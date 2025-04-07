@@ -19,6 +19,10 @@ CP_DIR := cp -ar --reflink=auto
 reverse = $(if $(wordlist 2,2,$(1)),$(call reverse,$(wordlist 2,$(words $(1)),$(1))) $(firstword $(1)),$(1))
 uppercase = $(shell echo "$1" | tr '[:lower:]' '[:upper:]')
 
+slash_passtrough_target = $(firstword $(subst /, ,$1))
+slash_passtrough_path = $(shell echo "$1" | sed -E 's|[^\/]+\/(.+)$$|\1|')
+slash_passtrough = +$(MAKE) -C $(call slash_passtrough_path,$1)$(if $2, $2,) $(call slash_passtrough_target,$1)
+
 # might be useful
 RANDOM_STRING = $(shell hexdump -v -n 16 -e '4 /4  "%08X" 1 "\n"' /dev/urandom)
 

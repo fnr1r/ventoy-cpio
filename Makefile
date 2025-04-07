@@ -14,7 +14,7 @@ clean-all: clean-all/tools clean
 download: download/tools
 prepare: prepare/tools
 clean/% clean-src/% clean-all/% download/% prepare/%:
-	+$(MAKE) -C $(call reverse,$(subst /, ,$@))
+	$(call slash_passtrough,$@)
 
 tools:
 	+$(MAKE) -C $@
