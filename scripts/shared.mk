@@ -6,6 +6,9 @@ ARCHES_ALL := $(ARCHES_X86) $(ARCHES_ARM) $(ARCHES_MIPS)
 ARCHES_WITHOUT_I386 := x86_64 $(ARCHES_ARM) $(ARCHES_MIPS)
 ARCHES_WITHOUT_MIPS := $(ARCHES_X86) $(ARCHES_ARM)
 
+# TODO: add BIN_ prefix to above arches for consistency
+RD_ARCHES_ALL := x86 arm64 mips64
+
 CURL_FLAGS ?= -L -s
 XZ_FLAGS ?= -e -9
 
