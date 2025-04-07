@@ -1,23 +1,15 @@
 include scripts/here.mk
-include $(SCRIPTS_DIR)/shared.mk
+include $(SCRIPTS_DIR)/shared_main.mk
 
 BUILD_DIR ?= build
 DIST_DIR ?= dist
 
-.PHONY: all build clean clean-src clean-all download prepare
+.PHONY: all build
 all: build
 build: arch base
-clean: clean/tools
-	-rm -r dist build
-clean-src: clean-src/tools clean
-clean-all: clean-all/tools clean
-download: download/tools
-prepare: prepare/tools
-clean/% clean-src/% clean-all/% download/% prepare/%:
-	$(call slash_passtrough,$@)
 
 .PHONY: tools
-tools:
+tools: prepare
 	+$(MAKE) -C $@
 
 .PHONY: base
