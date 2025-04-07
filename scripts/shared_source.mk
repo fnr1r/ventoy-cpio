@@ -1,3 +1,8 @@
+ifndef SCRIPTS_DIR
+$(error SCRIPTS_DIR not set)
+endif
+include $(SCRIPTS_DIR)/shared.mk
+
 # Download a file and check its hash
 #
 # Defines a target named after the file
