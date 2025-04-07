@@ -30,8 +30,12 @@ slash_passtrough = +$(MAKE) -C $(call slash_passtrough_path,$1)$(if $2, $2,) $(c
 RANDOM_STRING = $(shell hexdump -v -n 16 -e '4 /4  "%08X" 1 "\n"' /dev/urandom)
 
 # default to building for all targets
+# this will conflict with RD_ARCHES targets in root build.mk
+# DEFAULT_TARGETS is probably needed
+# TODO: improve this
+ifndef TARGET
 ifndef TARGETS
 TARGETS := $(ARCHES_ALL)
-endif
-
 export TARGETS
+endif
+endif
