@@ -8,6 +8,4 @@ endif
 
 SUPPORTED_TARGETS := $(strip $(foreach target,$(TARGETS),$(filter $(SUPPORTED_ARCHES),$(target))))
 
-.PHONY: all build
-all: build
 build: $(SUPPORTED_TARGETS)
