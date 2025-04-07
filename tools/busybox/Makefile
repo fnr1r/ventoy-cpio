@@ -1,5 +1,5 @@
 include ../../scripts/here.mk
-include $(SCRIPTS_DIR)/shared.mk
+include $(SCRIPTS_DIR)/shared_main.mk
 include info.mk
 
 SUPPORTED_ARCHES := $(ARCHES_ALL)
