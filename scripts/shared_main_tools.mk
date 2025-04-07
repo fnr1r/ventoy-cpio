@@ -11,11 +11,5 @@ SUPPORTED_TARGETS := $(strip $(foreach target,$(TARGETS),$(filter $(SUPPORTED_AR
 .PHONY: all build clean clean-src clean-all download prepare
 all: build
 build: $(SUPPORTED_TARGETS)
-clean:
-	-rm -r build dist
-clean-src: clean
-	+$(MAKE) -f source.mk clean
-clean-all: clean
-	+$(MAKE) -f source.mk $@
-download prepare:
+clean clean-src clean-all download prepare:
 	+$(MAKE) -f source.mk $@

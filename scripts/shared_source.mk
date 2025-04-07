@@ -15,9 +15,9 @@ $(foreach t,$(if $2,$2,$(notdir $1)),
 $(eval
 $t:
 	$(SCRIPTS_DIR)/download.sh $1 $t
-clean/$t:
-	-rm $$(patsubst clean/%,%,$$@)
-clean-all: clean/$t
+clean-all/$t:
+	-rm $t
+clean-all: clean-all/$t
 )
 )
 endef
@@ -37,12 +37,12 @@ $3: $1 | $4
 	tar xf $$<
 	mv $2 $$@
 	@touch $$@
-clean/$3:
+clean-src/$3:
 	@if [ -d "$2" ]; then \
 		rm -r $2; \
 	fi
 	-rm -r $3
-clean $(foreach d,$4,clean/$d): clean/$3
+clean-src $(foreach d,$4,clean/$d): clean-src/$3
 )
 endef
 
@@ -75,9 +75,10 @@ download: $($1_FILENAME)
 )
 endef
 
-.PHONY: all prepare clean clean-all download
+.PHONY: all clean clean-all download prepare
 all: prepare
-prepare:
 clean:
-clean-all: clean
+clean-src:
+clean-all:
 download:
+prepare:
