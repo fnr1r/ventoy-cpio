@@ -2,8 +2,6 @@ include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared_build.mk
 include info.mk
 
-ARCH := $(TARGET)
-
 CC := gcc
 CFLAGS := -Os
 CPPFLAGS := -D_FILE_OFFSET_BITS=64 -DBUILD_VTOY_TOOL

@@ -5,8 +5,6 @@ include info.mk
 TARGET_DIR := $(DIST_DIR)/$(TARGET)
 WORK_DIR := $(BUILD_DIR)/$(TARGET)
 
-ARCH := $(TARGET)
-
 CC := gcc
 CFLAGS := -Os -pedantic
 CPPFLAGS := -Wall -Wextra -DXZ_DEC_ANY_CHECK -DXZ_DEC_CONCATENATED -DXZ_USE_CRC64

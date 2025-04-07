@@ -12,7 +12,3 @@ CONFIG_ASH := 03-ash-extras.config
 CONFIG_BUSYBOX := 01-defconfig-static.config
 CONFIG_HEXDUMP := 03-hexdump.config
 CONFIG_XZCAT := 03-xzcat-only.config
-
-split_binname = $(subst /, ,$(subst -, ,$(patsubst dist/%,%,$1)))
-get_arch = $(firstword $(call split_binname,$1))
-get_bin = $(lastword $(call split_binname,$1))

@@ -2,11 +2,6 @@ include ../../scripts/here.mk
 include $(SCRIPTS_DIR)/shared_build.mk
 include info.mk
 
-ARCH := $(call get_arch,$(TARGET))
-BIN_NAME := $(call get_bin,$(TARGET))
-
-TARGET_DIR := $(DIST_DIR)/$(ARCH)
-
 CONFIGS_DIR := configs
 
 CC := gcc
