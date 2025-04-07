@@ -8,8 +8,6 @@ endif
 
 SUPPORTED_TARGETS := $(strip $(foreach target,$(TARGETS),$(filter $(SUPPORTED_ARCHES),$(target))))
 
-.PHONY: all build clean clean-src clean-all download prepare
+.PHONY: all build
 all: build
 build: $(SUPPORTED_TARGETS)
-clean clean-src clean-all download prepare:
-	+$(MAKE) -f source.mk $@

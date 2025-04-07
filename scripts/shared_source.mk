@@ -82,3 +82,6 @@ clean-src:
 clean-all:
 download:
 prepare:
+
+clean/% clean-src/% clean-all/% download/% prepare/%:
+	$(call slash_passtrough,$@,-f source.mk)
