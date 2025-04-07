@@ -1,5 +1,4 @@
 include ../../scripts/here.mk
-include $(SCRIPTS_DIR)/shared.mk
 include $(SCRIPTS_DIR)/shared_build.mk
 include info.mk
 

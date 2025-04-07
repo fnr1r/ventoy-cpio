@@ -1,3 +1,8 @@
+ifndef SCRIPTS_DIR
+$(error SCRIPTS_DIR not set)
+endif
+include $(SCRIPTS_DIR)/shared.mk
+
 ifndef TARGET
 $(error TARGET is not defined)
 endif
