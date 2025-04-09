@@ -9,6 +9,6 @@ SRC_URL := https://busybox.net/downloads/$(SRC_FILENAME)
 SRC_DIR := src
 
 CONFIG_ASH := 03-ash-extras.config
-CONFIG_BUSYBOX := 01-defconfig-static.config
+CONFIG_BUSYBOX := 02-custom-static.config
 CONFIG_HEXDUMP := 03-hexdump.config
 CONFIG_XZCAT := 03-xzcat-only.config
