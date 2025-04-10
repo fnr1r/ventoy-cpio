@@ -44,6 +44,7 @@ SOURCES = $(shell find $(SRC_DIR))
 export CC
 export CFLAGS
 export WITH_DIETLIBC
+unexport TARGETS
 
 build: $(TARGET_DIR)/$(BIN_NAME) $(TARGET_DIR)/$(BIN_NAME).debug
 clean:
@@ -64,7 +65,7 @@ $(WORK_DIR)/.configured: $(WORK_DIR)/.copied
 	@touch $@
 
 $(WORK_DIR)/$(BIN_NAME)/$(BIN_NAME): $(WORK_DIR)/.configured
-	+$(MAKE) -C $(dir $<)
+	+$(MAKE) -C $(dir $<) MAKEFLAGS="$$MFLAGS"
 
 $(TARGET_DIR)/$(BIN_NAME).debug: $(WORK_DIR)/$(BIN_NAME)/$(BIN_NAME)
 	@mkdir -p $(dir $@)
