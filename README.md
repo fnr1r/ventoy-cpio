@@ -15,9 +15,10 @@ Make a replacement ramdisk for Ventoy
 
 ### Non-goals
 
-- ❌ a binary-identical ramdisk
+- ❌ a binary-identical ramdisk to the official one
   - compiling identical binaries with the instructions given would be near
   impossible and is ultimately pointless
+  - however, ramdisks built with this project should be repoducible
 
 ### Possible future changes
 
