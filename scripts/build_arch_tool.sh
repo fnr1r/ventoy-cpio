@@ -19,19 +19,20 @@ copy_with() {
         "$REPO_DIR/tools/lz4/dist/${arch}/lz4cat" \
         "lz4cat${suffix}"
     cp -a \
+        "$REPO_DIR/tools/vtoytool/dist/${arch}/vtoytool" \
+        "vtoytool/00/vtoytool_${suffix}"
+    if [[ "$arch" != "mips64" ]]; then
+        return
+    fi
+    cp -a \
         "$REPO_DIR/tools/lunzip/dist/${arch}/lunzip" \
         "lunzip${suffix}"
     cp -a \
         "$REPO_DIR/tools/squashfs/dist/${arch}/unsquashfs" \
         "unsquashfs_${suffix}"
-    if [[ "$arch" != "mips64el" ]]; then
-        cp -a \
-            "$REPO_DIR/tools/vblade/dist/${arch}/vblade" \
-            "vblade_${suffix}"
-    fi
     cp -a \
-        "$REPO_DIR/tools/vtoytool/dist/${arch}/vtoytool" \
-        "vtoytool/00/vtoytool_${suffix}"
+        "$REPO_DIR/tools/vblade/dist/${arch}/vblade" \
+        "vblade_${suffix}"
     cp -a \
         "$REPO_DIR/tools/zstd/dist/${arch}/zstdcat" \
         "zstdcat${suffix}"
@@ -55,9 +56,9 @@ prepare_files_x86() {
 
 prepare_files_mips64() {
     copy_with mips64el m64e
-    cp -a \
-        "$REPO_DIR/tools/vtoy_fuse_iso/dist/mips64el/vtoy_fuse_iso" \
-        "vtoy_fuse_iso_m64e"
+    #cp -a \
+    #    "$REPO_DIR/tools/vtoy_fuse_iso/dist/mips64el/vtoy_fuse_iso" \
+    #    "vtoy_fuse_iso_m64e"
 }
 
 prepare_files() {
