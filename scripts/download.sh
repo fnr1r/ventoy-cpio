@@ -47,7 +47,7 @@ try_hash_check() {
         suffix=""
     done
     if [ "$suffix" = "" ]; then
-        eecho "Warning: No hash file for $TARGET_FILENAME" > /dev/stderr
+        eecho "Warning: No hash file for $TARGET_FILENAME"
         return
     fi
 
@@ -57,9 +57,9 @@ try_hash_check() {
     fi
     set +e
     rm "$TARGET_FILE"
-    eecho "ERROR! HASH MISMATCH FOR $TARGET_FILENAME" > /dev/stderr
+    eecho "ERROR! HASH MISMATCH FOR $TARGET_FILENAME"
     cat "$hashfile"
-    eecho "    !=    " > /dev/stderr
+    eecho "    !=    "
     "$cmd" "$TARGET_FILENAME" > /dev/stderr
     return 1
 }
