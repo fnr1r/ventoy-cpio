@@ -16,32 +16,38 @@ SRC_URL="https://www.fefe.de/$NAME/$SRC_FILENAME"
 
 MAKEOPTS=(-j "$JOBS")
 
-download_and_extract() {
-    url="$1"
-    src="$2"
-    dest="$3"
-    url_file="$(basename "$1")"
+download() {
+    local url="$1"
+    local dest="$2"
 
     echo "$url"
 
-    if ! [[ -f "$url_file" ]]; then
+    if ! [[ -f "$dest" ]]; then
         echo "  downloading"
-        wget -q "$url" -O "$url_file"
+        wget -q "$url" -O "$dest"
     else
         echo "  skipping download"
     fi
 
-    if ! [[ -f "$url_file.skip_check" ]]; then
+    if ! [[ -f "$dest.skip_check" ]]; then
         printf "  verifying: "
-        sha256sum -c "$url_file.sha256"
+        sha256sum -c "$dest.sha256"
     else
         echo "  skipping verification"
     fi
+}
 
-    tmpd="$(mktemp -d)"
+download_and_extract() {
+    local url="$1"
+    local src="$2"
+    local dest="$3"
+    local url_file_dest="$TMP_DOWNLOAD/$(basename "$1")"
+    download "$url" "$url_file_dest"
+
+    local tmpd="$(mktemp -d)"
     pushd "$tmpd" > /dev/null
     echo "  extracting"
-    tar xf "$TMP_DOWNLOAD/$url_file"
+    tar xf "$url_file_dest"
     mv "$src" "$dest"
     echo "  done"
     popd > /dev/null
@@ -85,8 +91,11 @@ main() {
     cp -a --reflink=auto . "$TMP_DOWNLOAD"
     cd "$TMP_DOWNLOAD"
     download_and_extract "$SRC_URL" "$SRC_DIR" "$TMP_BUILD"
+    local patch_url="https://salsa.debian.org/debian/dietlibc/-/raw/db88cb7b9063d03284881e86a3101f58f764390d/debian/patches/bugfixes/newer-linux-headers.diff"
+    local patch_dest="$TMP_DOWNLOAD/$(basename "$patch_url")"
+    download "$patch_url" "$patch_dest"
     pushd "$TMP_BUILD" > /dev/null
-    patch -p 1 -i "$HERE/newer-linux-headers.diff"
+    patch -p 1 -i "$patch_dest"
     "build_$build_type"
     popd > /dev/null
     rm -r "$TMP_BUILD" "$TMP_DOWNLOAD"
