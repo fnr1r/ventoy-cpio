@@ -1,0 +1,57 @@
+name: ventoy-cpio release
+
+# creates a manually-activatable workflow run button
+# in the GitHub Actions web UI
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: The tag or branch name to build from and upload into
+        required: true
+      release_description:
+        description: Description that will be visible in the release page
+        required: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ github.event.inputs.release_tag }}
+
+      # prevents "mkdir: cannot create directory 'build': Permission denied"
+      # during the execution of cpio.base.mk
+      - name: Set permissive repository permissions for docker
+        run: chmod -R 777 .
+
+      - name: Run docker compose
+        run: |
+          docker compose build
+          docker compose up --abort-on-container-failure
+          docker compose down
+
+      # prevents "xz: dist/ventoy.cpio.xz: Permission denied"
+      # during the compression of artifacts
+      - name: Set ownership permissions on artifacts
+        run: |
+          sudo chown -R $(whoami) dist
+          sudo chgrp -R docker dist
+
+      - name: Compress artifacts
+        run: |
+          for artifact in dist/ventoy*; do
+            xz -v $artifact
+          done
+
+      - name: Create release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.event.inputs.release_tag }}
+          body: ${{ github.event.inputs.release_description }}
+          file: dist/ventoy*
+          overwrite: true
+          file_glob: true
