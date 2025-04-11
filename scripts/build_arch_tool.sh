@@ -16,7 +16,7 @@ copy_with() {
         "$REPO_DIR/tools/device-mapper/dist/${arch}/dmsetup" \
         "dmsetup${suffix}"
     cp -a \
-        "$REPO_DIR/tools/lz4/dist/${arch}/lz4cat" \
+        "$REPO_DIR/tools/smallz4/dist/${arch}/smallz4cat" \
         "lz4cat${suffix}"
     cp -a \
         "$REPO_DIR/tools/vtoytool/dist/${arch}/vtoytool" \

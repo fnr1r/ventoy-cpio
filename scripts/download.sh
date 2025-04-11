@@ -47,20 +47,26 @@ try_hash_check() {
         suffix=""
     done
     if [ "$suffix" = "" ]; then
-        eecho "Warning: No hash file for $TARGET_FILENAME" > /dev/stderr
+        eecho "Warning: No hash file for $TARGET_FILENAME"
         return
     fi
 
     local hashfile="$TARGET_FILENAME$suffix"
-    if "$cmd" -c "$hashfile" > /dev/null; then
+    local hashfile_base hashfile_dir
+    hashfile_base="$(basename "$hashfile")"
+    hashfile_dir="$(dirname "$hashfile")"
+    pushd "$hashfile_dir" > /dev/null
+    if "$cmd" -c "$hashfile_base" > /dev/null; then
+        popd > /dev/null
         return
     fi
     set +e
     rm "$TARGET_FILE"
-    eecho "ERROR! HASH MISMATCH FOR $TARGET_FILENAME" > /dev/stderr
-    cat "$hashfile"
-    eecho "    !=    " > /dev/stderr
+    eecho "ERROR! HASH MISMATCH FOR $TARGET_FILENAME"
+    cat "$hashfile_base"
+    eecho "    !=    "
     "$cmd" "$TARGET_FILENAME" > /dev/stderr
+    popd > /dev/null
     return 1
 }
 
