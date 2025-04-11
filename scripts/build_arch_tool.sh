@@ -21,7 +21,7 @@ copy_with() {
     cp -a \
         "$REPO_DIR/tools/vtoytool/dist/${arch}/vtoytool" \
         "vtoytool/00/vtoytool_${suffix}"
-    if [[ "$arch" != "mips64" ]]; then
+    if [[ "$arch" == "mips64el" ]]; then
         return
     fi
     cp -a \
