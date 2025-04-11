@@ -10,7 +10,7 @@ Make a replacement ramdisk for Ventoy
 - [?] with a sane(-er) build system
 - [x] a bootable one
 - [ ] a functionally identical one  
-  (a.k.a can do the same things as the upstream)
+  (i.e. can do the same things as the upstream)
 - [ ] a smaller one
 
 ### Non-goals
@@ -18,16 +18,16 @@ Make a replacement ramdisk for Ventoy
 - ❌ a binary-identical ramdisk to the official one
   - compiling identical binaries with the instructions given would be near
   impossible and is ultimately pointless
-  - however, ramdisks built with this project should be repoducible
+  - however, ramdisks built with this project should be reproducible
 
 ### Possible future changes
 
 - Removing suffixes from binaries (they're just annoying and inconsistent)  
-  (no upsteam changes required)
+  (no upstream changes required)
 - Splitting the ramdisks into x86 32-bit and 64-bit  
   (would require changes to grub)
 - Cleaning up shell scripts in the ramdisk  
-  (no upsteam changes required)
+  (no upstream changes required)
 
 ## Progress
 
@@ -85,7 +85,7 @@ docker compose up
 Hint:
 
 If you don't want to redownload archives every time you rebuild the container,
-go to `docker/base/{dietlibc,musl,toolchains}`, look though the setup script
+go to `docker/base/{dietlibc,musl,toolchains}`, look through the setup script
 and manually `wget` the file.
 
 You can also run this to enter the container:
