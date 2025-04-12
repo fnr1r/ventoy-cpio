@@ -1,5 +1,10 @@
 # Ventoy CPIO
 
+An alternate ramdisk for [Ventoy](https://github.com/ventoy/Ventoy).
+
+Docs are available [here](https://github.com/fnr1r/ventoy-meta/tree/main/docs)
+and releases [here](https://github.com/fnr1r/ventoy-cpio/releases).
+
 NOTE: This is just a small part of my attempt to add a sane(-ish) build system
 to Ventoy.
 
@@ -11,7 +16,7 @@ Make a replacement ramdisk for Ventoy
 - [x] a bootable one
 - [ ] a functionally identical one  
   (i.e. can do the same things as the upstream)
-- [ ] a smaller one
+- [x] a smaller one
 
 ### Non-goals
 
