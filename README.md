@@ -6,7 +6,8 @@ Docs are available [here](https://github.com/fnr1r/ventoy-meta/tree/main/docs)
 and releases [here](https://github.com/fnr1r/ventoy-cpio/releases).
 
 NOTE: This is just a small part of my attempt to add a sane(-ish) build system
-to Ventoy.
+to Ventoy. An index for all my Ventoy-related projects can be found
+[here](https://github.com/fnr1r/ventoy-meta).
 
 ## Goal
 
