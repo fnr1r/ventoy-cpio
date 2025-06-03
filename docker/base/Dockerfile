@@ -101,6 +101,14 @@ RUN --mount=type=cache,target=/var/cache/apt/archives \
 
 RUN --mount=type=cache,target=/var/cache/apt/archives \
     --mount=type=cache,target=/var/lib/apt/lists \
+    apt-get install -y \
+        libdevmapper1.02.1 libdevmapper-dev \
+        libgcrypt20 libgcrypt20-dev \
+        libpopt0 libpopt-dev \
+        uuid uuid-dev
+
+RUN --mount=type=cache,target=/var/cache/apt/archives \
+    --mount=type=cache,target=/var/lib/apt/lists \
     apt-get install -y upx
 
 # this is required for some programs to compile with musl-gcc
