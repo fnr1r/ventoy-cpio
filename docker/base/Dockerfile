@@ -1,5 +1,5 @@
 FROM alpine:latest AS toolchains
-RUN --mount=type=cache,target=/var/cache/apk \
+RUN --mount=type=cache,sharing=locked,target=/var/cache/apk \
     apk add bash curl patchelf wget xz
 
 RUN --mount=type=bind,source=toolchains,target=/tmp/toolchains \
@@ -62,6 +62,22 @@ RUN --mount=type=cache,id=/var/cache/apt/archives-musl-i386,target=/var/cache/ap
 
 RUN --mount=type=bind,source=musl,target=/tmp/musl \
     bash /tmp/musl/setup.sh i386
+
+
+
+FROM rust:alpine AS tool-rscpio
+
+RUN --mount=type=cache,sharing=locked,target=/var/cache/apk \
+    apk add musl-dev
+
+ADD https://github.com/fnr1r/rscpio.git#d23a4949e12ff3752f9c60bbaf288635ca7ae56f /build
+
+WORKDIR /build
+
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,target=/build/target,sharing=locked \
+    cargo build --release --bin rscpio && \
+    mkdir -p dist && cp -a target/release/rscpio dist/
 
 
 
@@ -142,6 +158,8 @@ RUN for i in asm-generic asm linux mtd; do \
 
 RUN ln -s /usr/include/linux /opt/musl-i386/include/linux
 RUN ln -s /opt/musl-i386/bin/musl-gcc /usr/local/bin/musl-i386-gcc
+
+COPY --from=tool-rscpio /build/dist/rscpio /usr/local/bin/rscpio
 
 RUN echo '\n\
 # SHELL EXTENSIONS IN /etc/bashrc.d\n\

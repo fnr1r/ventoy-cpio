@@ -15,8 +15,7 @@ tools: prepare
 .PHONY: base
 base: $(DIST_DIR)/ventoy.cpio
 
-.PHONY: $(DIST_DIR)/ventoy.cpio
-$(DIST_DIR)/ventoy.cpio:
+$(DIST_DIR)/ventoy.cpio: $(shell find base/)
 	+$(MAKE) -f cpio.base.mk
 
 .PHONY: arch
